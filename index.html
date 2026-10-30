@@ -1,0 +1,1343 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manual Fibo F5 para Mauri</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Caveat:wght@600;700&display=swap">
+<style>
+/* Layout: una columna de estudio — secciones apiladas, cada práctica es una "consola" que se activa al tocarla */
+:root{
+  color-scheme: dark;
+  --bg:#0B0C0F; --panel:#14161B; --panel2:#1B1E25; --line:#2A2E37; --line2:#383D47;
+  --fg:#ECEDEF; --muted:#A3A9B4; --dim:#7D8490;
+  --amber:#FFB547; --amber-ink:#FFC970; --amber-bg:#33270F;
+  --cyan:#4FD6C8; --cyan-ink:#7BE6DA; --cyan-bg:#0F2E2B;
+  --rec:#FF5A5A; --ok:#5BD68A;
+  --z-tool-bg:#3A2C12; --z-tool-fg:#FFC970; --z-tool-bd:#5C4720;
+  --z-tr-bg:#0F302C; --z-tr-fg:#6FE6D8; --z-tr-bd:#1E5149;
+  --z-cmd-bg:#2C3039; --z-cmd-fg:#FFFFFF; --z-cmd-bd:#4E5561;
+  --z-mod-bg:#23262D; --z-mod-fg:#C9CED6; --z-mod-bd:#3A3F48;
+  --z-sys-bg:#1E2128; --z-sys-fg:#A9B0BB; --z-sys-bd:#30353E;
+  --z-free-bg:#16181D; --z-free-fg:#858C98; --z-free-bd:#24272E;
+  --f-display:'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --f-body:'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --f-mono:'IBM Plex Mono', ui-monospace, Consolas, monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 64px}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:88px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-0.02em}
+h2{font-size:clamp(28px,4vw,40px);line-height:1.05;font-weight:700}
+h3{font-size:21px;font-weight:700;letter-spacing:-0.01em}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:18px;color:var(--muted);max-width:64ch}
+section{display:flex;flex-direction:column;gap:24px;scroll-margin-top:72px}
+.sec-head{display:flex;flex-direction:column;gap:10px}
+a{color:var(--cyan-ink)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+
+/* barra */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(11,12,15,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  margin-left:calc(-1 * max(16px, env(safe-area-inset-left, 0px)));margin-right:calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  padding:12px max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.top-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-family:var(--f-mono);font-size:13px;font-weight:600;letter-spacing:.06em;white-space:nowrap}
+.brand b{color:var(--amber)}
+.nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.nav a{font-size:14px;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:8px;white-space:nowrap}
+.nav a:hover{color:var(--fg);background:var(--panel2)}
+
+/* keycaps */
+.kc{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;padding:0 9px;border-radius:7px;background:#20232A;border:1px solid var(--line2);border-bottom-width:3px;border-bottom-color:#07080A;
+  font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--fg);white-space:nowrap;line-height:1}
+.kc.lg{min-width:56px;height:52px;font-size:16px;border-bottom-width:5px;border-radius:9px}
+.combo{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap}
+.combo i{font-style:normal;font-family:var(--f-mono);color:var(--dim);font-size:12px}
+
+/* hero */
+.hero{padding-top:56px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:48px;align-items:end}
+.hero h1{font-size:clamp(48px,8vw,96px);line-height:.92;font-weight:800;letter-spacing:-0.035em}
+.hero h1 span{color:var(--amber)}
+.gift{position:relative;padding:28px;border-radius:20px;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;gap:18px}
+.gift .to{font-family:var(--f-display);font-size:40px;font-weight:800;letter-spacing:-0.02em;line-height:1}
+.names{display:flex;flex-wrap:wrap;gap:8px}
+.names span{padding:6px 12px;border-radius:999px;border:1px solid var(--line2);font-size:15px}
+.mauri{display:flex;gap:8px}
+.mauri .kc{min-width:52px;height:52px;font-size:20px;border-bottom-width:5px;animation:wave 4.5s ease-in-out infinite}
+.mauri .kc:nth-child(2){animation-delay:.15s}.mauri .kc:nth-child(3){animation-delay:.3s}.mauri .kc:nth-child(4){animation-delay:.45s}.mauri .kc:nth-child(5){animation-delay:.6s}
+@keyframes wave{0%,14%,100%{transform:none;background:#20232A;color:var(--fg);border-bottom-color:#07080A;box-shadow:none}5%,9%{transform:translateY(3px);background:var(--amber);color:#111;border-bottom-color:var(--amber);box-shadow:0 0 22px rgba(255,181,71,.55)}}
+.specs{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.specs span{font-size:13px;color:var(--muted);padding:5px 10px;border-radius:6px;background:var(--panel2)}
+
+/* consolas (paneles activables) */
+.console{position:relative;padding:28px;border-radius:22px;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;gap:20px;outline:none;transition:border-color .2s, box-shadow .2s}
+.console:focus-within{border-color:var(--amber);box-shadow:0 0 0 4px rgba(255,181,71,.12)}
+.console-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.live{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.live::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--line2)}
+.console:focus-within .live{color:var(--amber-ink)}
+.console:focus-within .live::before{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+.live .on{display:none}.console:focus-within .live .on{display:inline}.console:focus-within .live .off{display:none}
+
+/* explorador */
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line2);background:transparent;padding:7px 13px;border-radius:999px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:36px}
+.chip[aria-pressed="true"]{background:var(--fg);color:#111;border-color:var(--fg)}
+.chip .sw{width:12px;height:12px;border-radius:3px;border:1px solid}
+.kb-scroll{overflow-x:auto;margin:0 -4px;padding:4px}
+.kb{position:relative;min-width:760px;width:100%;aspect-ratio:22.5/6.25}
+.k{position:absolute;padding:2px}
+.k button{width:100%;height:100%;border-radius:6px;border:1px solid;border-bottom-width:4px;cursor:pointer;font-family:var(--f-mono);font-weight:600;
+  font-size:clamp(8px,1vw,13px);line-height:1.05;padding:0 2px;display:flex;align-items:center;justify-content:center;text-align:center;transition:transform .1s, opacity .2s}
+.k button:hover{transform:translateY(-1px)}
+.k button.sel{outline:2px solid #fff;outline-offset:1px}
+.k button.dim{opacity:.22}
+.k button.hit{animation:hit .35s ease-out}
+.k button.down{transform:translateY(3px);border-bottom-width:1px;filter:brightness(1.9);box-shadow:0 0 18px rgba(255,181,71,.55)}
+.k.knob button{border-radius:50%;font-size:clamp(12px,1.6vw,22px)}
+@keyframes hit{0%{transform:translateY(3px);filter:brightness(1.8)}100%{transform:none;filter:none}}
+.info{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:start;padding:20px;border-radius:16px;background:var(--panel2)}
+.info .cap{min-width:72px;height:72px;padding:0 12px;border-radius:12px;border:1px solid;border-bottom-width:5px;display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:18px;font-weight:700}
+.info .zone{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.info .fn{font-size:19px;line-height:1.45;margin-top:6px}
+
+/* pasos */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.step{padding:22px;border-radius:18px;border:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.step .n{font-family:var(--f-mono);font-size:13px;color:var(--amber-ink)}
+.step p{font-size:15px;color:var(--muted)}
+.step b{color:var(--fg);font-weight:600}
+
+/* herramientas */
+.frow{display:flex;gap:8px;flex-wrap:wrap}
+.frow .grp{display:flex;flex-direction:column;gap:8px}
+.frow .grp-l{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--dim);border-bottom:1px solid var(--line);padding-bottom:6px}
+.frow .grp-k{display:flex;gap:8px}
+.fkey{width:64px;height:58px;border-radius:9px;background:#20232A;border:1px solid var(--line2);border-bottom:5px solid #07080A;font-family:var(--f-mono);font-weight:700;font-size:15px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.fkey small{font-family:var(--f-body);font-size:10px;font-weight:500;color:var(--muted)}
+.fkey.on{background:var(--amber);border-color:var(--amber);border-bottom-color:#8A5D16;color:#111;transform:translateY(3px)}
+.fkey.on small{color:#3A2A0C}
+.readout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ro{padding:16px 18px;border-radius:14px;background:var(--panel2);display:flex;flex-direction:column;gap:4px}
+.ro .l{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.ro .v{font-family:var(--f-display);font-size:28px;font-weight:700;line-height:1.1}
+.ro .d{font-size:14px;color:var(--muted)}
+.smart{position:relative;height:150px;border-radius:12px;background:var(--cyan-bg);border:1px solid var(--z-tr-bd);cursor:crosshair;touch-action:none;overflow:hidden}
+.smart .mid{position:absolute;left:0;right:0;top:50%;border-top:1px dashed #2E6A61}
+.smart .edge{position:absolute;top:0;bottom:0;width:8%;background:rgba(255,181,71,.08)}
+.smart .tag{position:absolute;pointer-events:none;transform:translate(12px,-50%);padding:5px 10px;border-radius:6px;background:var(--amber);color:#111;font-family:var(--f-mono);font-size:12px;font-weight:700;white-space:nowrap}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+
+/* editor de clip */
+.track{position:relative;height:150px;border-radius:12px;background:#0E1013;border:1px solid var(--line);cursor:text;overflow:hidden;touch-action:none}
+.ruler{position:absolute;left:0;right:0;top:0;height:24px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:repeat(8,minmax(0,1fr))}
+.ruler span{font-family:var(--f-mono);font-size:10px;color:var(--dim);border-left:1px solid #1E2127;padding:5px 0 0 5px}
+.lane{position:absolute;left:0;right:0;top:32px;bottom:10px}
+.clip{position:absolute;top:0;bottom:0;border-radius:6px;background:#12352F;border:1px solid #2B7268;overflow:hidden}
+.clip .nm{position:absolute;left:6px;top:3px;font-family:var(--f-mono);font-size:10px;color:var(--cyan-ink);z-index:2}
+.wv{position:absolute;inset:14px 0 4px;display:flex;align-items:center}
+.wv span{flex:1;margin:0 .5px;background:var(--cyan);border-radius:1px;opacity:.85}
+.fade{position:absolute;top:0;bottom:0;background:rgba(8,9,11,.72);z-index:1}
+.fade.in{left:0;clip-path:polygon(0 0,100% 0,0 100%)}
+.fade.out{right:0;clip-path:polygon(0 0,100% 0,100% 100%)}
+.cursor{position:absolute;top:24px;bottom:0;width:2px;margin-left:-1px;background:#fff;z-index:3;pointer-events:none}
+.pad{display:flex;flex-wrap:wrap;gap:8px}
+.pad button{display:inline-flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;font-size:14px;min-height:44px}
+.pad button:hover{border-color:var(--line2)}
+.log{font-family:var(--f-mono);font-size:13px;color:var(--muted);min-height:20px}
+.log b{color:var(--amber-ink);font-weight:600}
+
+/* transporte */
+.tp{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:start}
+.numpad{display:grid;grid-template-columns:repeat(4,58px);grid-template-rows:repeat(5,58px);gap:7px;padding:16px;border-radius:16px;background:#0E1013;border:1px solid var(--line)}
+.np{border-radius:9px;border:1px solid var(--line2);border-bottom:5px solid #07080A;background:#1C1F25;color:var(--dim);font-family:var(--f-mono);font-weight:700;font-size:15px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1}
+.np small{font-family:var(--f-body);font-size:9px;font-weight:500;color:inherit;opacity:.8}
+.np.t{background:var(--z-tr-bg);border-color:var(--z-tr-bd);border-bottom-color:#07080A;color:var(--z-tr-fg)}
+.np.r{color:#FF8A8A}
+.np.flash{background:var(--cyan);color:#111;transform:translateY(3px)}
+.np.r.flash{background:var(--rec)}
+.np.on{box-shadow:inset 0 0 0 2px var(--cyan)}
+.status{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.status .st{font-family:var(--f-display);font-size:30px;font-weight:800;letter-spacing:-0.02em}
+.counter{font-family:var(--f-mono);font-size:22px;font-variant-numeric:tabular-nums;padding:6px 12px;border-radius:8px;background:#0E1013;border:1px solid var(--line)}
+.tl{position:relative;height:190px;border-radius:12px;background:#0E1013;border:1px solid var(--line);overflow:hidden;cursor:pointer}
+.tl .trk{position:absolute;left:0;right:0;height:62px;border-top:1px dashed #1E2127}
+.tl .trk em{position:absolute;left:8px;top:6px;font-style:normal;font-family:var(--f-mono);font-size:10px;color:var(--dim);z-index:2}
+.tl .gtr{position:absolute;top:8px;bottom:8px;border-radius:5px;background:#12352F;border:1px solid #2B7268}
+.tl .rg{position:absolute;top:8px;bottom:8px;border-radius:5px;background:rgba(255,90,90,.3);border:1px solid var(--rec)}
+.tl .mk{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--amber);z-index:3}
+.tl .mk span{position:absolute;top:28px;left:-10px;width:20px;height:20px;border-radius:4px;background:var(--amber);color:#111;font-family:var(--f-mono);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.tl .ph{position:absolute;top:24px;bottom:0;width:2px;margin-left:-1px;background:#fff;z-index:4}
+.tl .loopband{position:absolute;top:24px;height:4px;left:0;right:0;background:var(--cyan);opacity:0;transition:opacity .2s}
+.tl.loop .loopband{opacity:.8}
+.flags{display:flex;gap:8px;flex-wrap:wrap}
+.flag{font-family:var(--f-mono);font-size:12px;padding:5px 10px;border-radius:6px;border:1px solid var(--line2);color:var(--dim)}
+.flag.on{border-color:var(--cyan);color:var(--cyan-ink)}
+.flag.rec.on{border-color:var(--rec);color:#FF8A8A}
+
+/* buscador */
+.search{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.search input{flex:1 1 280px;min-width:0;height:48px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);color:var(--fg);padding:0 16px;font:inherit;font-size:16px}
+.search input::placeholder{color:var(--dim)}
+.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 32px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row .ds{font-size:15px;min-width:0}
+.row .ct{display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.empty{color:var(--muted);padding:20px 0}
+
+/* desafío */
+.quiz{align-items:center;text-align:center;gap:18px;padding-block:40px}
+.quiz .q{font-family:var(--f-display);font-size:clamp(28px,4.5vw,46px);font-weight:800;line-height:1.05;letter-spacing:-0.02em;max-width:22ch}
+.quiz .meta{display:flex;gap:16px;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.quiz .fb{min-height:44px;display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;font-size:17px}
+.quiz .fb.good{color:var(--ok)}
+.quiz .fb.bad{color:#FF8A8A}
+.dots{display:flex;gap:6px}
+.dots span{width:10px;height:10px;border-radius:50%;background:var(--line2)}
+.dots span.g{background:var(--ok)}.dots span.b{background:var(--rec)}.dots span.c{background:var(--amber)}
+.btn{border:1px solid var(--line2);background:var(--panel2);padding:10px 18px;border-radius:10px;cursor:pointer;font-size:15px;min-height:44px}
+.btn.pri{background:var(--amber);border-color:var(--amber);color:#111;font-weight:600}
+
+/* VIA */
+.map{width:100%;border-collapse:collapse;font-size:15px}
+.map th{text-align:left;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--dim);font-weight:500;padding:10px 12px 10px 0;border-bottom:1px solid var(--line2);text-transform:uppercase}
+.map th.l1{color:var(--amber-ink)}
+.map td{padding:12px 12px 12px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.map td:first-child{font-family:var(--f-mono);font-weight:600;white-space:nowrap}
+.map td.l1{color:var(--amber-ink)}
+.tbl{overflow-x:auto}
+.note{padding:20px 22px;border-radius:16px;background:var(--amber-bg);border:1px solid var(--z-tool-bd);color:#F3E6CC;font-size:15px;display:flex;flex-direction:column;gap:8px}
+.note .eyebrow{color:var(--amber-ink)}
+.card{padding:22px;border-radius:18px;border:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.card p{font-size:15px;color:var(--muted)}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+
+footer{border-top:1px solid var(--line);padding-top:40px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:end}
+footer .sig{font-family:var(--f-display);font-size:30px;font-weight:700;letter-spacing:-0.02em;line-height:1.15}
+footer .sig span{color:var(--amber)}
+
+/* regalo */
+body.gifting{overflow:hidden}
+.gift-ov{position:fixed;inset:0;z-index:100;background:radial-gradient(ellipse 70% 60% at 62% 48%, #221E18 0%, #0B0C0F 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  padding:max(24px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));overflow:auto;transition:opacity .7s ease}
+.gift-ov.gone{opacity:0;pointer-events:none}
+.gift-ov .gl{font-family:var(--f-mono);font-size:12px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;text-align:center}
+.scene{display:flex;align-items:flex-end;justify-content:center;gap:clamp(20px,5vw,56px);flex-wrap:wrap}
+.boxwrap{position:relative;width:320px;height:340px;flex:none}
+.floor{position:absolute;left:50%;bottom:20px;width:310px;height:60px;margin-left:-155px;border-radius:50%;background:rgba(0,0,0,.7);filter:blur(18px)}
+.burst{position:absolute;left:50%;top:38%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:#FFE7A3;opacity:0;transition:opacity .5s .3s, box-shadow 1s .3s}
+.stage{position:absolute;left:50%;top:64%;width:0;height:0;perspective:1100px}
+.cube{position:absolute;left:0;top:0;transform-style:preserve-3d;transform:rotateX(-22deg) rotateY(-36deg)}
+.f{position:absolute;left:0;top:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.paper{background-color:#141416;background-image:radial-gradient(rgba(226,184,96,.42) 1.3px, transparent 2px),radial-gradient(rgba(226,184,96,.2) 1.3px, transparent 2px);background-size:22px 22px;background-position:0 0, 11px 11px;box-shadow:inset 0 0 0 1px rgba(226,184,96,.22)}
+.f::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3}
+.sh-front::after{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(0,0,0,.22))}
+.sh-right::after{background:linear-gradient(180deg,rgba(0,0,0,.34),rgba(0,0,0,.52))}
+.sh-top::after{background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(0,0,0,.06))}
+.lfront::after{background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(0,0,0,.3))}
+.rib{position:absolute;background:linear-gradient(90deg,#8E6310,#D9AE4C 26%,#FFE7A3 46%,#E2B655 60%,#9C6E14);z-index:2}
+.rib.v{top:0;bottom:0;left:50%;width:36px;margin-left:-18px}
+.rib.h{left:0;right:0;top:50%;height:36px;margin-top:-18px;background:linear-gradient(180deg,#8E6310,#D9AE4C 26%,#FFE7A3 46%,#E2B655 60%,#9C6E14)}
+.bfront,.bright{width:220px;height:220px;margin:-110px 0 0 -110px}
+.bfront{transform:translateZ(110px)}
+.bright{transform:rotateY(90deg) translateZ(110px)}
+.lidg{position:absolute;left:0;top:0;transform-style:preserve-3d;}
+.lfront,.lright{width:236px;height:46px;margin:-23px 0 0 -118px}
+.lfront{transform:translateY(-121px) translateZ(118px)}
+.lright{transform:translateY(-121px) rotateY(90deg) translateZ(118px)}
+.ltop{width:236px;height:236px;margin:-118px 0 0 -118px;transform:translateY(-144px) rotateX(90deg)}
+.tail{position:absolute;left:50%;top:50%;width:26px;height:100px;margin-left:-13px;transform-origin:50% 0;z-index:2;background:linear-gradient(90deg,#8E6310,#D9AE4C 30%,#FFE7A3 50%,#C9982F 75%,#8E6310);clip-path:polygon(0 0,100% 0,100% 100%,50% 84%,0 100%)}
+.bp{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d;transform:translateY(-145px) rotateY(var(--ry,0deg))}
+.loop{position:absolute;bottom:-3px;width:var(--w,78px);height:var(--h,42px);border-radius:50%;
+  background:linear-gradient(180deg,#FFF1C6 0%,#EEC768 20%,#C99631 44%,#8A600F 58%,#C29034 76%,#F2D27F 100%);
+  -webkit-mask:radial-gradient(closest-side,transparent 56%,#000 61%,#000 97%,transparent 100%);mask:radial-gradient(closest-side,transparent 56%,#000 61%,#000 97%,transparent 100%)}
+.loop.l{right:-5px;transform-origin:100% 100%;transform:rotate(var(--t,20deg))}
+.loop.r{left:-5px;transform-origin:0 100%;transform:rotate(calc(-1 * var(--t,20deg)))}
+.loop.d{filter:brightness(.78)}
+.knot{position:absolute;left:-17px;top:-22px;width:34px;height:28px;border-radius:44% 44% 40% 40%;background:radial-gradient(circle at 42% 32%,#FFF1C6 0%,#E3B653 34%,#B07E1F 70%,#7A520C 100%);box-shadow:0 4px 7px rgba(0,0,0,.4), inset 0 -3px 4px rgba(60,35,0,.45)}
+.knot::before,.knot::after{content:"";position:absolute;top:6px;bottom:6px;width:2px;border-radius:1px;background:rgba(90,58,8,.45)}
+.knot::before{left:10px}.knot::after{right:10px}
+.boxwrap.ready{animation:wiggle 3s ease-in-out infinite}
+@keyframes wiggle{0%,78%,100%{transform:none}82%{transform:rotate(-2.5deg)}86%{transform:rotate(2.5deg)}90%{transform:rotate(-1.5deg)}94%{transform:rotate(1deg)}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-5px) rotate(-1.5deg)}40%{transform:translateX(5px) rotate(1.5deg)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.gift-ov.opening .boxwrap{animation:shake .35s ease-in-out 1}
+.card-in{background:#2A241D;background-image:repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 2px, transparent 2px 9px)}
+.in-back{width:218px;height:218px;margin:-109px 0 0 -109px;transform:translateZ(-109px)}
+.in-back::after{background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.25))}
+.in-left{width:218px;height:218px;margin:-109px 0 0 -109px;transform:rotateY(90deg) translateZ(-109px)}
+.in-left::after{background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.15))}
+.in-bottom{width:218px;height:218px;margin:-109px 0 0 -109px;transform:translateY(109px) rotateX(90deg)}
+.in-bottom::after{background:rgba(0,0,0,.45)}
+.lback,.lleft{width:236px;height:46px;margin:-23px 0 0 -118px}
+.lback{transform:translateY(-121px) rotateY(180deg) translateZ(118px)}
+.lleft{transform:translateY(-121px) rotateY(-90deg) translateZ(118px)}
+.lback::after{background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.4))}
+.lleft::after{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.25))}
+.lunder{width:236px;height:236px;margin:-118px 0 0 -118px;transform:translateY(-98px) rotateX(-90deg)}
+.lunder::after{background:rgba(0,0,0,.3)}
+.gift-ov.opening .lidg{animation:lidoff 1.6s cubic-bezier(.3,.1,.3,1) .3s forwards}
+@keyframes lidoff{0%{transform:none}30%{transform:translateY(-110px) rotateX(8deg)}70%{transform:translate3d(-120px,-230px,40px) rotateX(48deg) rotateZ(-24deg) rotateY(30deg)}100%{transform:translate3d(-190px,-320px,60px) rotateX(70deg) rotateZ(-34deg) rotateY(50deg)}}
+.gift-ov.opening .lidg > *{animation:lidfade 1.6s linear .3s forwards}
+@keyframes lidfade{from{opacity:1}to{opacity:0}}
+.gift-ov .scene{transition:opacity .6s}
+.gift-ov.expanding .scene,.gift-ov.expanding .openbtn,.gift-ov.expanding .gl{opacity:0 !important}
+.mcover{position:fixed;z-index:102;border-radius:10px;background:var(--bg);border:1px solid #4A3E22;box-shadow:0 18px 40px rgba(0,0,0,.6);container-type:size;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:3cqh;padding:0 8cqw;overflow:hidden}
+.mcover .me{font-family:var(--f-mono);font-size:3.2cqw;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+.mcover .mt{font-family:var(--f-display);font-weight:800;font-size:12cqw;line-height:.92;letter-spacing:-0.035em;color:var(--fg)}
+.mcover .mt span{color:var(--amber)}
+.mcover .mf{font-family:var(--f-body);font-size:3.6cqw;color:var(--muted)}
+.gift-ov.opening .burst{opacity:1;box-shadow:0 0 150px 100px rgba(255,214,140,.5)}
+@media (max-width:520px){.boxwrap{scale:.8;margin:-34px -32px}}
+.card3d{width:min(340px,86vw);height:230px;perspective:1200px;flex:none;cursor:pointer;background:none;border:0;padding:0}
+.card3d .inner{position:relative;width:100%;height:100%;transition:transform .9s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d;transform:rotate(-4deg)}
+.card3d.open .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#F3EBDD;color:#1D1A16;box-shadow:0 24px 50px rgba(0,0,0,.45);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:22px;text-align:center}
+.face{background-image:repeating-linear-gradient(0deg, rgba(0,0,0,.018) 0 1px, transparent 1px 3px)}
+.face.front{border:1px solid #E1D5BF;box-shadow:0 24px 50px rgba(0,0,0,.45), inset 0 0 0 8px #F3EBDD, inset 0 0 0 9px #C9A24E}
+.face.front .hand{font-family:'Caveat', cursive;font-size:46px;font-weight:700;line-height:1}
+.face.front .from{font-size:13px;color:#5E554A}
+.face.front .hint{margin-top:10px;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:#8A6A2C;text-transform:uppercase}
+.face.back{transform:rotateY(180deg);gap:14px}
+.face.back .msg{font-family:'Caveat', cursive;font-size:clamp(40px,10vw,54px);font-weight:700;line-height:1;color:#1D1A16}
+.face.back .sig{font-family:'Caveat', cursive;font-size:22px;line-height:1.2;color:#5E554A}
+.openbtn{opacity:0;transform:translateY(8px);transition:opacity .5s .5s, transform .5s .5s;pointer-events:none}
+.gift-ov.carded .openbtn{opacity:1;transform:none;pointer-events:auto}
+.confetti{position:fixed;left:50%;top:50%;width:9px;height:14px;border-radius:2px;z-index:101;pointer-events:none;animation:conf 1.4s cubic-bezier(.1,.7,.3,1) forwards}
+@keyframes conf{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--r));opacity:0}}
+.again{background:none;border:1px solid var(--line2);border-radius:10px;padding:10px 16px;cursor:pointer;color:var(--muted);font-size:14px;min-height:44px}
+.again:hover{color:var(--fg)}
+
+/* cumple */
+.bday{align-items:center;text-align:center;gap:14px;padding-block:40px 24px}
+.bday-btn{background:none;border:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;padding:20px 28px;border-radius:28px;transition:transform .15s}
+.bday-btn:hover{transform:scale(1.03) rotate(-1deg)}
+.bday-btn:active{transform:scale(.97)}
+.bday-btn .bd1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,5vw,52px);letter-spacing:-0.02em;color:var(--fg);line-height:1}
+.bday-btn .bd2{font-family:var(--f-display);font-weight:800;font-size:clamp(88px,18vw,210px);letter-spacing:-0.05em;line-height:.9;color:var(--amber);text-shadow:0 0 60px rgba(255,181,71,.25)}
+.bday-hint{font-family:var(--f-mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.cf{position:fixed;left:0;top:0;z-index:200;pointer-events:none;will-change:transform,opacity}
+/* perilla */
+.kn{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px}
+.kn-stage{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.knob{width:170px;height:170px;border-radius:50%;flex:none;background:radial-gradient(circle at 40% 32%,#30343D,#15171C 72%);border:2px solid #3A3F49;box-shadow:0 10px 0 #07080A,0 20px 34px rgba(0,0,0,.55);position:relative;cursor:grab;touch-action:none;transition:transform .08s, box-shadow .08s}
+.knob:active{cursor:grabbing}
+.knob::before{content:"";position:absolute;inset:5px;border-radius:50%;background:repeating-conic-gradient(#343842 0 4deg,#17191E 4deg 8deg);-webkit-mask:radial-gradient(closest-side,transparent 82%,#000 84%);mask:radial-gradient(closest-side,transparent 82%,#000 84%)}
+.knob .ind{position:absolute;inset:0;transition:transform .16s ease-out}
+.knob .ind::after{content:"";position:absolute;left:50%;top:20px;width:6px;height:30px;margin-left:-3px;border-radius:3px;background:var(--amber);box-shadow:0 0 12px rgba(255,181,71,.6)}
+.knob.pressed{transform:translateY(6px);box-shadow:0 4px 0 #07080A,0 10px 20px rgba(0,0,0,.5)}
+.acts{display:flex;flex-direction:column;gap:10px;flex:1;min-width:240px}
+.act{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);transition:border-color .25s, background .25s}
+.act.flash{border-color:var(--amber);background:var(--amber-bg);transition:none}
+.act .ic{font-size:20px;text-align:center;color:var(--amber-ink)}
+.act .lb{font-size:11px;color:var(--dim);font-family:var(--f-mono);letter-spacing:.08em;text-transform:uppercase}
+.act .vv{font-size:16px;font-weight:600}
+.code{font-family:var(--f-mono);font-size:12px;padding:7px 9px;border-radius:7px;background:#0E1013;border:1px solid var(--line2);color:var(--cyan-ink);cursor:pointer;white-space:nowrap;min-height:34px}
+.code:hover{border-color:var(--cyan)}
+.olist{counter-reset:st;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.olist li{counter-increment:st;display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;font-size:15px;color:var(--muted);align-items:start}
+.olist li::before{content:counter(st);width:28px;height:28px;border-radius:50%;background:var(--amber-bg);border:1px solid var(--z-tool-bd);color:var(--amber-ink);font-family:var(--f-mono);font-size:13px;display:flex;align-items:center;justify-content:center}
+.olist b{color:var(--fg);font-weight:600}
+/* atajos plegables */
+.vault{border:1px solid var(--line);border-radius:24px;background:var(--panel)}
+.vault>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:32px}
+.vault>summary::-webkit-details-marker{display:none}
+.vault>summary:hover .chev{border-color:var(--amber);color:var(--amber-ink)}
+.vault .chev{flex:none;width:52px;height:52px;border-radius:50%;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;transition:transform .3s, border-color .2s}
+.vault[open] .chev{transform:rotate(180deg)}
+.vault-body{padding:8px 32px 48px;display:flex;flex-direction:column;gap:88px}
+.vault .console{background:var(--bg)}
+
+@media (max-width: 900px){
+  .kn{grid-template-columns:1fr}
+  .vault>summary{padding:22px}
+  .vault-body{padding:4px 18px 32px}
+  .hero{grid-template-columns:1fr;gap:32px}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .two,.list,.grid3{grid-template-columns:1fr}
+  .tp{grid-template-columns:1fr}
+  .nav{display:none}
+}
+@media (max-width: 520px){
+  .steps{grid-template-columns:1fr}
+  .console{padding:20px}
+  .numpad{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(5,52px)}
+  .readout{grid-template-columns:1fr}
+  .fkey{width:56px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+
+<div class="gift-ov" id="giftOv" role="dialog" aria-modal="true" aria-label="Regalo para Mauri">
+  <div class="gl" id="giftLead">Mauri, tenés un regalo · primero, la tarjeta</div>
+  <div class="scene">
+    <button class="card3d" id="giftCard" type="button" aria-label="Abrir la tarjeta">
+      <div class="inner">
+        <div class="face front"><span class="hand">Para Mauri</span><span class="from">De Salo, Jose, Kay, Anthony y Alirio</span><span class="hint">Tocá para abrir</span></div>
+        <div class="face back"><span class="msg">Marico el que lo lea</span><span class="sig">Con cariño,<br>Salo, Jose, Kay, Anthony y Alirio</span></div>
+      </div>
+    </button>
+    <div class="boxwrap ready" id="giftBox" aria-hidden="true">
+      <div class="floor"></div>
+      <div class="burst"></div>
+      <div class="stage"><div class="cube">
+        <div class="f card-in in-bottom"></div>
+        <div class="f card-in in-back"></div>
+        <div class="f card-in in-left"></div>
+        <div class="f paper sh-front bfront"><div class="rib v"></div></div>
+        <div class="f paper sh-right bright"><div class="rib v"></div></div>
+        <div class="lidg">
+          <div class="f card-in lunder"></div>
+          <div class="f paper lback"><div class="rib v"></div></div>
+          <div class="f paper lleft"><div class="rib v"></div></div>
+          <div class="f paper lfront"><div class="rib v"></div></div>
+          <div class="f paper sh-right lright"><div class="rib v"></div></div>
+          <div class="f paper sh-top ltop"><div class="rib v"></div><div class="rib h"></div><div class="tail" style="transform:rotate(152deg)"></div><div class="tail" style="transform:rotate(-148deg)"></div></div>
+          <div class="bp" style="--ry:120deg"><div class="loop l d" style="--t:16deg"></div><div class="loop r d" style="--t:16deg"></div></div>
+          <div class="bp" style="--ry:60deg"><div class="loop l d" style="--t:20deg;--w:74px"></div><div class="loop r d" style="--t:20deg;--w:74px"></div></div>
+          <div class="bp" style="--ry:0deg"><div class="loop l" style="--t:18deg;--w:82px;--h:44px"></div><div class="loop r" style="--t:18deg;--w:82px;--h:44px"></div></div>
+          <div class="bp" style="--ry:150deg"><div class="loop l" style="--t:52deg;--w:56px;--h:34px"></div><div class="loop r" style="--t:52deg;--w:56px;--h:34px"></div></div>
+          <div class="bp" style="--ry:90deg"><div class="loop l" style="--t:56deg;--w:54px;--h:32px"></div><div class="loop r" style="--t:56deg;--w:54px;--h:32px"></div></div>
+          <div class="bp" style="--ry:30deg"><div class="loop l" style="--t:48deg;--w:58px;--h:34px"></div><div class="loop r" style="--t:48deg;--w:58px;--h:34px"></div><div class="knot"></div></div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="mcover" id="mcover" hidden aria-hidden="true"><span class="me">Manual de instrucciones</span><span class="mt">Fibo F5<br><span>× Pro Tools</span></span><span class="mf">Para Mauri</span></div>
+  <button class="btn pri openbtn" id="giftOpen" type="button" style="font-size:17px;padding:14px 26px">Abrir el regalo</button>
+</div>
+<script>document.body.classList.add('gifting');</script>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">FIBO F5 <b>×</b> PRO TOOLS</div>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#perilla">Perilla</a>
+      <a href="#teclado">Teclado</a>
+      <a href="#via">VIA</a>
+      <a href="#atajos-todos">Atajos de Pro Tools</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" aria-label="Portada">
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <div class="eyebrow">Manual de instrucciones · edición de audio</div>
+      <h1>Fibo F5<br><span>× Pro Tools</span></h1>
+      <p class="lead">Pro Tools ya lo sabés. Esto es lo que suma tu teclado nuevo: cómo configurar la perilla, qué hace cada tecla y, si querés repasar, todos los atajos con prácticas para probarlos.</p>
+      <div class="specs">
+        <span>100% · 107 teclas · ISO España</span><span>Switches Red lineales</span><span>Hot-swap</span><span>USB-C · 1000 Hz</span><span>QMK / VIA</span><span>Ruedita</span>
+      </div>
+    </div>
+    <div class="gift">
+      <div class="eyebrow">Un regalo</div>
+      <div class="to">Para Mauri</div>
+      <div class="mauri" aria-hidden="true"><span class="kc">M</span><span class="kc">A</span><span class="kc">U</span><span class="kc">R</span><span class="kc">I</span></div>
+      <p style="color:var(--muted)">De parte de</p>
+      <div class="names"><span>Salo</span><span>Jose</span><span>Kay</span><span>Anthony</span><span>Alirio</span></div>
+      <p style="font-size:15px;color:var(--muted)">Que cada sesión salga más rápida. Y que el próximo bounce sea el bueno.</p>
+    </div>
+  </section>
+
+  <section id="perilla">
+    <div class="sec-head">
+      <div class="eyebrow">Lo primero</div>
+      <h2>Configurá la perilla</h2>
+      <p class="lead">De fábrica sube y baja el volumen de Windows y presionada hace mute. Con VIA le asignás lo que quieras a cada gesto: girar a la derecha, girar a la izquierda y presionar.</p>
+    </div>
+    <div class="kn">
+      <div class="console" style="gap:22px">
+        <div class="console-bar"><h3>Elegí una receta y probala</h3></div>
+        <div class="filters" id="knRecipes" role="group" aria-label="Recetas para la perilla"></div>
+        <div class="kn-stage">
+          <div class="knob" id="knob" tabindex="0" role="slider" aria-label="Perilla de prueba: girala con la rueda del mouse, arrastrando o con las flechas; Enter para presionar" aria-valuenow="0" aria-valuemin="-100" aria-valuemax="100"><div class="ind" id="knInd"></div></div>
+          <div class="acts">
+            <div class="act" id="actCcw"><span class="ic">↺</span><div><div class="lb">Girar a la izquierda</div><div class="vv" id="vCcw"></div></div><button class="code" type="button" id="cCcw"></button></div>
+            <div class="act" id="actCw"><span class="ic">↻</span><div><div class="lb">Girar a la derecha</div><div class="vv" id="vCw"></div></div><button class="code" type="button" id="cCw"></button></div>
+            <div class="act" id="actPr"><span class="ic">⏎</span><div><div class="lb">Presionar</div><div class="vv" id="vPr"></div></div><button class="code" type="button" id="cPr"></button></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline">
+          <span class="log" id="knLog">Girá la perilla con la rueda del mouse, arrastrándola o con las flechas. Clic o Enter para presionar.</span>
+          <span style="font-family:var(--f-mono);font-size:12px;color:var(--amber-ink)" id="knLayer"></span>
+        </div>
+        <p style="font-size:15px;color:var(--muted)" id="knNote"></p>
+      </div>
+      <div class="console" style="gap:18px">
+        <h3>Paso a paso en VIA</h3>
+        <ol class="olist">
+          <li><span>Con el teclado conectado, abrí <b>usevia.app</b> en Chrome o Edge. Firefox no puede comunicarse con el teclado.</span></li>
+          <li><span>Tocá <b>Authorize device</b> y elegí el teclado. Si no aparece: Settings › <b>Show Design tab</b> y cargá el archivo JSON del Fibo F5, que provee el fabricante o el vendedor.</span></li>
+          <li><span>En <b>Configure</b>, elegí la capa arriba del dibujo: <b>0</b> es la normal y <b>1</b> la que se usa mientras mantenés Fn.</span></li>
+          <li><span>Tocá la <b>perilla en el dibujo</b>. VIA te muestra qué hace al girar a la derecha, a la izquierda y al presionar.</span></li>
+          <li><span>Para cada gesto, elegí la función en las pestañas de abajo (Basic, Media…) o pegá el código de la receta en <b>Any</b>. Tocá un código a la izquierda para copiarlo.</span></li>
+          <li><span>Se guarda en el teclado al instante, sin botón de guardar. Probalo en Pro Tools.</span></li>
+        </ol>
+        <p style="font-size:13px;color:var(--dim)">Según la versión de VIA, o si usás Keychron Launcher, los nombres de las pantallas pueden cambiar un poco; los pasos son los mismos.</p>
+      </div>
+    </div>
+    <div class="grid3">
+      <div class="card"><h3>Las tres recetas juntas</h3><p>Capa 0: volumen. Capa 1 (con Fn): zoom. Para una tercera, asigná la tecla Menú a <b style="color:var(--fg)">MO(2)</b> en la capa 0 y poné el nudge en la capa 2: mientras mantenés Menú, la perilla hace nudge.</p></div>
+      <div class="card"><h3>Commands Focus</h3><p>Las recetas de zoom usan las letras R, T y E. En Pro Tools tiene que estar activo el botón a–z de la ventana Edit (Ctrl + Alt + 1).</p></div>
+      <div class="card"><h3>Numpad en transporte</h3><p>La receta de nudge usa + y − del numpad. Revisá que en Setup › Preferences › Operation el numpad esté en Transport.</p></div>
+    </div>
+  </section>
+
+  <section id="teclado">
+    <div class="sec-head">
+      <div class="eyebrow">El mapa</div>
+      <h2>Qué hace cada tecla en Pro Tools</h2>
+      <p class="lead">Apretá cualquier tecla de tu Fibo y se hunde acá, con su función en Pro Tools. También podés tocarlas en el dibujo.</p>
+    </div>
+    <div class="console" id="explorer" tabindex="0" aria-label="Explorador del teclado. Al tener el foco, las teclas físicas se muestran en el dibujo. Escape para salir.">
+      <div class="console-bar">
+        <div class="filters" id="zoneFilters" role="group" aria-label="Filtrar por zona"></div>
+        <span class="live"><span class="off">Apretá cualquier tecla de tu Fibo</span><span class="on">Teclado conectado · Esc para salir</span></span>
+      </div>
+      <div class="kb-scroll"><div class="kb" id="kb"></div></div>
+      <div class="info" aria-live="polite">
+        <div class="cap" id="iCap">Espacio</div>
+        <div><div class="zone" id="iZone">Transporte</div><div class="fn" id="iFn">Play / Stop.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="via">
+    <div class="sec-head">
+      <div class="eyebrow">Configuración</div>
+      <h2>Más cosas para configurar</h2>
+      <p class="lead">Con el mismo VIA podés convertir las teclas que Pro Tools no usa en atajos de una sola tecla.</p>
+    </div>
+    <div class="two">
+      <div class="console" style="gap:12px">
+        <h3>Mapa recomendado</h3>
+        <div class="tbl">
+          <table class="map">
+            <thead><tr><th>Tecla</th><th>Capa 0</th><th class="l1">Capa 1 · Fn</th></tr></thead>
+            <tbody>
+              <tr><td>Ruedita ↻</td><td>Volumen</td><td class="l1">R / T · zoom</td></tr>
+              <tr><td>Ruedita ⏎</td><td>Mute</td><td class="l1">E · zoom a la selección</td></tr>
+              <tr><td>F1 – F12</td><td>Teclas F (herramientas)</td><td class="l1">Multimedia</td></tr>
+              <tr><td>F11</td><td>Macro Ctrl + Shift + N · nuevas pistas</td><td class="l1">—</td></tr>
+              <tr><td>Impr</td><td>Macro Ctrl + Alt + B · Bounce</td><td class="l1">—</td></tr>
+              <tr><td>Bloq</td><td>Macro Ctrl + S · guardar</td><td class="l1">—</td></tr>
+              <tr><td>Pausa</td><td>Macro Ctrl + Alt + 1 · Commands Focus</td><td class="l1">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card"><h3>Cómo se hace un macro</h3><p>VIA › Macros › M0: escribí la combinación o grabala con Record. Después, en Configure › Macro, arrastrá M0 a la tecla.</p></div>
+        <div class="note"><span class="eyebrow">Ojo con el layout español</span><span>En este teclado el <b>=</b> está en Shift + 0 y los corchetes <b>[ ]</b> van con AltGr. Si Ctrl + = o Ctrl + [ ] no responden en Pro Tools, grabá el macro con Record usando las teclas reales y probalo antes de darlo por bueno. Mientras tanto: R / T para el zoom y el menú Window para Mix/Edit.</span></div>
+      </div>
+    </div>
+    <div class="grid3">
+      <div class="card"><h3>En el estudio</h3><p>Los switches Red son lineales y silenciosos, pero igual alejá el teclado del micrófono cuando grabes voz en la misma sala.</p></div>
+      <div class="card"><h3>Luces</h3><p>Para sesiones largas, un efecto estático y tenue cansa menos la vista. Fn + Q cambia el efecto y Fn + W / S el brillo.</p></div>
+      <div class="card"><h3>Mantenimiento</h3><p>Es hot-swap: con la herramienta doble sacás tecla y switch sin soldar, con el cable desconectado. Trae 5 switches de repuesto.</p></div>
+    </div>
+  </section>
+
+  <details class="vault" id="atajos-todos">
+    <summary>
+      <div class="sec-head">
+        <div class="eyebrow">Opcional · para repasar</div>
+        <h2>Todos los atajos de Pro Tools</h2>
+        <p class="lead">Herramientas, edición, transporte con el numpad, un buscador de atajos y un desafío de 10 preguntas. Abrilo cuando quieras.</p>
+      </div>
+      <span class="chev" aria-hidden="true">⌄</span>
+    </summary>
+    <div class="vault-body">
+  <section id="preparar">
+    <div class="sec-head">
+      <div class="eyebrow">Una sola vez</div>
+      <h2>Antes de la primera sesión</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="n">Paso 1 · Windows</span><h3>Idioma del teclado</h3><p>Configuración › Hora e idioma › Idioma y región: <b>Español (España)</b>. Con «Latinoamérica» los símbolos no coinciden con las teclas.</p></div>
+      <div class="step"><span class="n">Paso 2 · Pro Tools</span><h3>Numpad como transporte</h3><p><b>Setup › Preferences › Operation › Numeric Keypad: Transport</b>, y Bloq Num encendido.</p></div>
+      <div class="step"><span class="n">Paso 3 · Pro Tools</span><h3>Commands Focus</h3><p>Botón <b>a–z</b> arriba a la derecha de la ventana Edit, o <b>Ctrl + Alt + 1</b>. Así cada letra sola es un comando.</p></div>
+      <div class="step"><span class="n">Paso 4 · Teclado</span><h3>Fila F como teclas F</h3><p>Si F1 sube el brillo o pausa la música, estás en la capa multimedia. Combiná con Fn o dejalo fijo en VIA.</p></div>
+    </div>
+  </section>
+
+  <section id="herramientas">
+    <div class="sec-head">
+      <div class="eyebrow">Práctica 1</div>
+      <h2>Modos y herramientas en la fila F</h2>
+      <p class="lead">F1–F4 eligen el modo de edición, F5–F10 la herramienta. Apretá F6 y F7 juntas para la Smart Tool. Esc las recorre en ciclo.</p>
+    </div>
+    <div class="console" id="tools" tabindex="0" aria-label="Práctica de herramientas. Con el foco, F1 a F10 y Escape cambian el modo y la herramienta.">
+      <div class="console-bar"><h3>Fila F</h3><span class="live"><span class="off">Clic para usar F1–F10</span><span class="on">F1–F10 activas · Esc cicla</span></span></div>
+      <div class="frow" id="frow"></div>
+      <div class="readout">
+        <div class="ro"><span class="l">Modo de edición</span><span class="v" id="roMode">Slip</span><span class="d" id="roModeD"></span></div>
+        <div class="ro"><span class="l">Herramienta</span><span class="v" id="roTool">Selector</span><span class="d" id="roToolD"></span></div>
+      </div>
+    </div>
+    <div class="two">
+      <div class="console" style="gap:14px">
+        <div class="console-bar"><h3>Smart Tool: pasá el mouse</h3></div>
+        <div class="smart" id="smart" aria-label="Clip de ejemplo: mové el puntero para ver qué herramienta toma la Smart Tool">
+          <div class="mid"></div><div class="edge" style="left:0"></div><div class="edge" style="right:0"></div>
+          <div class="tag" id="smartTag" hidden>Selector</div>
+        </div>
+        <p style="font-size:15px;color:var(--muted)">Arriba selecciona, abajo agarra el clip, en los bordes recorta y en las esquinas de arriba hace fades. Todo sin cambiar de herramienta.</p>
+      </div>
+      <div class="card" style="background:var(--panel)">
+        <h3>Para no perderse</h3>
+        <p><b style="color:var(--fg)">Shuffle</b> mueve todo lo que viene después: cuidado si el material está sincronizado con video.</p>
+        <p><b style="color:var(--fg)">Grid</b> (F4) apretado dos veces alterna entre grilla absoluta y relativa.</p>
+        <p><b style="color:var(--fg)">Trim</b> (F6) apretado varias veces muestra sus variantes, como TCE para estirar en el tiempo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="editar">
+    <div class="sec-head">
+      <div class="eyebrow">Práctica 2</div>
+      <h2>Editá un clip con una mano</h2>
+      <p class="lead">Hacé clic en el clip para poner el cursor y usá las teclas como en Pro Tools con Commands Focus. Las flechas mueven el cursor.</p>
+    </div>
+    <div class="console" id="editor" tabindex="0" aria-label="Simulador de edición. Con el foco: B separa, A y S recortan, D y G hacen fades, Z deshace, flechas mueven el cursor.">
+      <div class="console-bar"><h3>Pista «Voz»</h3><span class="live"><span class="off">Clic para editar con el teclado</span><span class="on">Commands Focus activo</span></span></div>
+      <div class="track" id="track"><div class="ruler" id="ruler1"></div><div class="lane" id="lane"></div><div class="cursor" id="ecur"></div></div>
+      <div class="pad" id="epad"></div>
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><div class="log" id="elog" aria-live="polite">Cursor en compás 5. Probá con <b>B</b>.</div><button class="btn" id="ereset" type="button">Reiniciar clip</button></div>
+    </div>
+  </section>
+
+  <section id="transporte">
+    <div class="sec-head">
+      <div class="eyebrow">Práctica 3</div>
+      <h2>El numpad es tu consola de transporte</h2>
+      <p class="lead">Activá la consola y usá el numpad: 0 reproduce, 3 graba en la pista armada, Enter deja un marcador y punto, número, punto vuelve a él.</p>
+    </div>
+    <div class="console" id="transport" tabindex="0" aria-label="Simulador de transporte. Con el foco, el teclado numérico controla la reproducción.">
+      <div class="console-bar"><h3>Sesión de prueba · 120 BPM</h3><span class="live"><span class="off">Clic para usar el numpad</span><span class="on">Numpad activo</span></span></div>
+      <div class="tp">
+        <div class="numpad" id="numpad"></div>
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <div class="status"><span class="st" id="tst">■ Detenido</span><span class="counter" id="tctr">1 | 1</span></div>
+          <div class="tl" id="tl">
+            <div class="ruler" id="ruler2"></div>
+            <div class="loopband"></div>
+            <div class="trk" style="top:34px"><em>Guitarra</em><div class="gtr" style="left:2%;width:70%"></div></div>
+            <div class="trk" style="top:100px"><em>Voz · armada ●</em><div id="regions"></div></div>
+            <div id="markers"></div>
+            <div class="ph" id="ph"></div>
+          </div>
+          <div class="flags"><span class="flag" id="fLoop">Loop</span><span class="flag" id="fClick">Clic</span><span class="flag rec" id="fRec">Rec</span><span class="flag" id="fDot">Marcador: —</span></div>
+          <div class="log" id="tlog" aria-live="polite">Hacé clic en la línea de tiempo para mover el cursor.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="atajos">
+    <div class="sec-head">
+      <div class="eyebrow">Referencia</div>
+      <h2>Buscador de atajos</h2>
+    </div>
+    <div class="search">
+      <input id="q" type="search" placeholder="Buscá: fade, bounce, solo, zoom…" aria-label="Buscar atajo">
+      <div class="filters" id="catFilters" role="group" aria-label="Categoría"></div>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section id="desafio">
+    <div class="sec-head">
+      <div class="eyebrow">Para practicar</div>
+      <h2>Desafío de 10 atajos</h2>
+      <p class="lead">Activá la consola y apretá el atajo que te pide. Sin mirar el buscador.</p>
+    </div>
+    <div class="console quiz" id="quiz" tabindex="0" aria-label="Desafío de atajos. Con el foco, apretá el atajo pedido.">
+      <span class="live"><span class="off">Clic para empezar</span><span class="on">Esperando tu atajo</span></span>
+      <div class="dots" id="qdots"></div>
+      <div class="q" id="qq">¿Listo, Mauri?</div>
+      <div class="fb" id="qfb"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+        <button class="btn" id="qskip" type="button">Ver respuesta</button>
+        <button class="btn pri" id="qnew" type="button">Nueva ronda</button>
+      </div>
+    </div>
+  </section>
+    </div>
+  </details>
+
+
+
+  <section class="bday" aria-label="Feliz cumpleaños">
+    <button class="bday-btn" id="bdayBtn" type="button"><span class="bd1">Feliz cumple,</span><span class="bd2">Mau</span></button>
+    <span class="bday-hint">Tocalo</span>
+  </section>
+
+  <footer>
+    <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start"><div class="sig">Con cariño, para Mauri<br><span>Salo, Jose, Kay, Anthony y Alirio</span></div><button class="again" id="giftAgain" type="button">Ver la tarjeta otra vez</button></div>
+    <p style="font-size:13px;color:var(--dim);max-width:46ch">Atajos de Pro Tools para Windows con la configuración de fábrica. Las combinaciones con Fn siguen el mapa habitual de Keychron con QMK; si tu unidad difiere, se ve y se cambia en VIA.</p>
+  </footer>
+</main>
+
+<script>
+(function(){
+  var ov = document.getElementById('giftOv'), card = document.getElementById('giftCard'), openBtn = document.getElementById('giftOpen'), lead = document.getElementById('giftLead');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function reset(){
+    ov.hidden = false; ov.classList.remove('gone','opening','carded','expanding'); card.classList.remove('open');
+    mc.hidden = true; mc.getAnimations && mc.getAnimations().forEach(function(a){ a.cancel(); });
+    card.setAttribute('aria-label','Abrir la tarjeta'); lead.textContent = 'Mauri, tenés un regalo · primero, la tarjeta';
+    document.body.classList.add('gifting'); window.scrollTo(0, 0);
+  }
+  card.addEventListener('click', function(){
+    var open = !card.classList.contains('open');
+    card.classList.toggle('open', open);
+    if (open) { ov.classList.add('carded'); lead.textContent = 'Ahora sí, abrí el regalo'; card.setAttribute('aria-label','Cerrar la tarjeta'); }
+    else card.setAttribute('aria-label','Abrir la tarjeta');
+  });
+  function confetti(){
+    if (reduce) return;
+    var colors = ['#FFB547','#4FD6C8','#FF5A5A','#F3EBDD','#7A8CFF'];
+    var r = document.getElementById('giftBox').getBoundingClientRect();
+    for (var i = 0; i < 46; i++) {
+      var s = document.createElement('span'); s.className = 'confetti';
+      var a = Math.random() * Math.PI * 2, d = 160 + Math.random() * 320;
+      s.style.left = (r.left + r.width / 2) + 'px'; s.style.top = (r.top + r.height * 0.32) + 'px';
+      s.style.background = colors[i % colors.length];
+      s.style.setProperty('--dx', Math.cos(a) * d + 'px'); s.style.setProperty('--dy', (Math.sin(a) * d - 120) + 'px'); s.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
+      s.style.animationDelay = (Math.random() * .15) + 's';
+      document.body.appendChild(s);
+      setTimeout((function(el){ return function(){ el.remove(); }; })(s), 1800);
+    }
+  }
+  openBtn.addEventListener('click', function(){
+    ov.classList.add('opening'); confetti();
+    if (reduce || !mc.animate) {
+      ov.classList.add('gone'); document.body.classList.remove('gifting'); window.scrollTo(0, 0);
+      setTimeout(function(){ ov.hidden = true; }, 700); return;
+    }
+    setTimeout(emerge, 1100);
+  });
+  var mc = document.getElementById('mcover');
+  function emerge(){
+    var f = document.querySelector('.bfront').getBoundingClientRect(), g = document.querySelector('.bright').getBoundingClientRect();
+    var cx = (f.left + g.right) / 2, rim = f.top + 18;
+    var w = Math.min(190, window.innerWidth * .5), h = w * 0.66;
+    mc.hidden = false;
+    Object.assign(mc.style, {left:(cx - w / 2) + 'px', top:(rim - h - 34) + 'px', width:w + 'px', height:h + 'px'});
+    var d = h + 34;
+    mc.animate([{transform:'translateY(' + d + 'px)', clipPath:'inset(0 0 ' + d + 'px 0)'}, {transform:'translateY(0px)', clipPath:'inset(0 0 0px 0)'}],
+      {duration:800, easing:'cubic-bezier(.2,.7,.2,1)', fill:'forwards'});
+    setTimeout(expand, 950);
+  }
+  function expand(){
+    var r = mc.getBoundingClientRect();
+    ov.classList.add('expanding');
+    mc.getAnimations().forEach(function(a){ a.cancel(); });
+    Object.assign(mc.style, {left:r.left + 'px', top:r.top + 'px', width:r.width + 'px', height:r.height + 'px'});
+    var ex = mc.animate([
+      {left:r.left + 'px', top:r.top + 'px', width:r.width + 'px', height:r.height + 'px', borderRadius:'10px'},
+      {left:'0px', top:'0px', width:window.innerWidth + 'px', height:window.innerHeight + 'px', borderRadius:'0px'}
+    ], {duration:750, easing:'cubic-bezier(.6,0,.2,1)', fill:'forwards'});
+    ex.onfinish = function(){
+      document.body.classList.remove('gifting'); window.scrollTo(0, 0);
+      ov.classList.add('gone');
+      setTimeout(function(){ ov.hidden = true; mc.hidden = true; mc.getAnimations().forEach(function(a){ a.cancel(); }); ov.classList.remove('expanding'); }, 750);
+    };
+  }
+  var again = document.getElementById('giftAgain');
+  if (again) again.addEventListener('click', reset);
+})();
+</script>
+<script>
+(function(){
+  'use strict';
+  var $ = function(id){ return document.getElementById(id); };
+  var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+
+  /* ---------- panel activo ---------- */
+  var active = null;
+  var handlers = {};
+  ['explorer','tools','editor','transport','quiz'].forEach(function(id){
+    var el = $(id);
+    el.addEventListener('focusin', function(){ active = id; if (handlers[id] && handlers[id].focus) handlers[id].focus(); });
+    el.addEventListener('focusout', function(e){ if (!el.contains(e.relatedTarget)) { if (active === id) active = null; if (handlers[id] && handlers[id].blur) handlers[id].blur(); } });
+    el.addEventListener('pointerdown', function(e){ if (e.target === el || !e.target.closest('button,input,a')) { setTimeout(function(){ el.focus({preventScroll:true}); }, 0); } });
+  });
+  document.addEventListener('keydown', function(e){
+    if (!active) {
+      var tg = e.target;
+      if (tg && (tg.tagName === 'INPUT' || tg.tagName === 'TEXTAREA')) return;
+      if (handlers.explorer) handlers.explorer.key(e, true);
+      return;
+    }
+    if (e.key === 'Escape' && active !== 'tools') { document.activeElement.blur(); return; }
+    var h = handlers[active];
+    if (h && h.key && h.key(e) !== false) e.preventDefault();
+  });
+  document.addEventListener('keyup', function(e){
+    if (handlers.explorer && handlers.explorer.up) handlers.explorer.up(e);
+    if (active && handlers[active] && handlers[active].keyup) handlers[active].keyup(e);
+  });
+  function refocus(id){ var el = $(id); if (el && document.activeElement !== el) el.focus({preventScroll:true}); }
+
+  /* ---------- Cumple ---------- */
+  var bdayCount = 0;
+  $('bdayBtn').addEventListener('click', function(e){
+    var r = this.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    var colors = ['#FFB547','#FFE7A3','#4FD6C8','#FF5A5A','#7A8CFF','#5BD68A','#F3EBDD'];
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var n = reduce ? 40 : 220;
+    bdayCount++;
+    $('bdayBtn').querySelector('.bd1').textContent = bdayCount > 1 ? '¡Feliz cumple otra vez,' : 'Feliz cumple,';
+    for (var i = 0; i < n; i++) {
+      var el = document.createElement('span'); el.className = 'cf';
+      var size = 6 + Math.random() * 9, round = Math.random() < .3;
+      el.style.width = size + 'px'; el.style.height = (round ? size : size * 1.6) + 'px';
+      el.style.borderRadius = round ? '50%' : '2px';
+      el.style.background = colors[i % colors.length];
+      var ox = i % 3 === 0 ? cx : (i % 3 === 1 ? 0 : window.innerWidth);
+      var oy = i % 3 === 0 ? cy : window.innerHeight;
+      el.style.left = ox + 'px'; el.style.top = oy + 'px';
+      document.body.appendChild(el);
+      var ang, sp;
+      if (i % 3 === 0) { ang = Math.random() * Math.PI * 2; sp = 200 + Math.random() * 420; }
+      else { ang = (i % 3 === 1 ? -Math.PI / 2 + .25 + Math.random() * .7 : -Math.PI / 2 - .25 - Math.random() * .7); sp = 500 + Math.random() * 500; }
+      var dx = Math.cos(ang) * sp, dy = Math.sin(ang) * sp, fall = 500 + Math.random() * 600, rot = Math.random() * 1440 - 720;
+      var dur = 2200 + Math.random() * 1600;
+      if (el.animate) {
+        var an = el.animate([
+          {transform:'translate(-50%,-50%) translate(0,0) rotate(0deg)', opacity:1},
+          {transform:'translate(-50%,-50%) translate(' + dx + 'px,' + dy + 'px) rotate(' + rot / 2 + 'deg)', opacity:1, offset:.3},
+          {transform:'translate(-50%,-50%) translate(' + dx * 1.25 + 'px,' + (dy + fall) + 'px) rotate(' + rot + 'deg)', opacity:0}
+        ], {duration:dur, easing:'cubic-bezier(.2,.6,.4,1)', delay:Math.random() * 250});
+        an.onfinish = (function(x){ return function(){ x.remove(); }; })(el);
+      } else { setTimeout((function(x){ return function(){ x.remove(); }; })(el), 100); }
+    }
+  });
+
+  /* ---------- 0. Perilla ---------- */
+  var RECIPES = {
+    vol:{n:'Volumen', layer:'Capa 0 · de fábrica', ccw:['Bajar volumen','KC_VOLD'], cw:['Subir volumen','KC_VOLU'], pr:['Mute','KC_MUTE'], note:'El volumen de Windows. Conviene dejarlo así en la capa 0 para el día a día.'},
+    zoom:{n:'Zoom', layer:'Capa 1 · mientras mantenés Fn', ccw:['R · zoom out','KC_R'], cw:['T · zoom in','KC_T'], pr:['E · zoom a la selección','KC_E'], note:'Fn + girar acerca y aleja la línea de tiempo; Fn + presionar hace zoom a lo que tengas seleccionado.'},
+    nudge:{n:'Nudge', layer:'Capa 2 · mientras mantenés Menú', ccw:['− · nudge atrás','KC_PMNS'], cw:['+ · nudge adelante','KC_PPLS'], pr:['0 · play / stop','KC_P0'], note:'Mueve el clip seleccionado según el valor de Nudge de la ventana Edit. Ideal para alinear tomas a oído.'},
+    hist:{n:'Historial', layer:'Alternativa para la capa 2', ccw:['Deshacer','LCTL(KC_Z)'], cw:['Rehacer','LCTL(LSFT(KC_Z))'], pr:['Guardar','LCTL(KC_S)'], note:'Girás hacia atrás para deshacer paso a paso, como una rueda del tiempo. Estos códigos van en la pestaña Any de VIA.'}
+  };
+  var rec = 'zoom', krot = 0, kacc = 0;
+  function renderRecipes(){
+    $('knRecipes').innerHTML = Object.keys(RECIPES).map(function(id){ return '<button class="chip" type="button" data-r="' + id + '" aria-pressed="' + (id === rec) + '">' + RECIPES[id].n + '</button>'; }).join('');
+    var r = RECIPES[rec];
+    $('vCcw').textContent = r.ccw[0]; $('cCcw').textContent = r.ccw[1];
+    $('vCw').textContent = r.cw[0]; $('cCw').textContent = r.cw[1];
+    $('vPr').textContent = r.pr[0]; $('cPr').textContent = r.pr[1];
+    $('knLayer').textContent = r.layer; $('knNote').textContent = r.note;
+  }
+  renderRecipes();
+  $('knRecipes').addEventListener('click', function(e){ var c = e.target.closest('.chip'); if (!c) return; rec = c.dataset.r; renderRecipes(); $('knLog').innerHTML = 'Receta <b>' + RECIPES[rec].n + '</b>. Probala girando la perilla.'; });
+  function flashAct(id){ var el = $(id); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); clearTimeout(el._t); el._t = setTimeout(function(){ el.classList.remove('flash'); }, 260); }
+  function kstep(dir){
+    krot += dir * 24; $('knInd').style.transform = 'rotate(' + krot + 'deg)';
+    var r = RECIPES[rec], a = dir > 0 ? r.cw : r.ccw;
+    flashAct(dir > 0 ? 'actCw' : 'actCcw');
+    $('knLog').innerHTML = (dir > 0 ? '↻ ' : '↺ ') + '<b>' + esc(a[0]) + '</b>';
+    $('knob').setAttribute('aria-valuenow', String(Math.max(-100, Math.min(100, Math.round(krot / 24)))));
+  }
+  function kpress(){
+    var kn = $('knob'); kn.classList.add('pressed'); setTimeout(function(){ kn.classList.remove('pressed'); }, 140);
+    flashAct('actPr'); $('knLog').innerHTML = '⏎ <b>' + esc(RECIPES[rec].pr[0]) + '</b>';
+  }
+  var kn = $('knob');
+  kn.addEventListener('wheel', function(e){ e.preventDefault(); kacc += e.deltaY || e.deltaX; while (Math.abs(kacc) >= 40) { kstep(kacc < 0 ? 1 : -1); kacc += kacc < 0 ? 40 : -40; } }, {passive:false});
+  var drag = null;
+  function ang(e){ var r = kn.getBoundingClientRect(); return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI; }
+  kn.addEventListener('pointerdown', function(e){ drag = {a:ang(e), acc:0, moved:false}; kn.setPointerCapture(e.pointerId); });
+  kn.addEventListener('pointermove', function(e){
+    if (!drag) return;
+    var a = ang(e), d = a - drag.a; if (d > 180) d -= 360; if (d < -180) d += 360;
+    drag.a = a; drag.acc += d;
+    while (Math.abs(drag.acc) >= 24) { drag.moved = true; kstep(drag.acc > 0 ? 1 : -1); drag.acc += drag.acc > 0 ? -24 : 24; }
+  });
+  kn.addEventListener('pointerup', function(){ if (drag && !drag.moved) kpress(); drag = null; });
+  kn.addEventListener('pointercancel', function(){ drag = null; });
+  kn.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { e.preventDefault(); e.stopPropagation(); kstep(1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { e.preventDefault(); e.stopPropagation(); kstep(-1); }
+    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); kpress(); }
+  });
+  ['cCcw','cCw','cPr'].forEach(function(id){
+    $(id).addEventListener('click', function(){
+      var b = $(id), t = b.textContent;
+      function done(){ b.textContent = 'Copiado'; setTimeout(function(){ b.textContent = t; }, 1100); }
+      try { navigator.clipboard.writeText(t).then(done, function(){ selectText(b); }); } catch (err) { selectText(b); }
+    });
+  });
+  function selectText(el){ var r = document.createRange(); r.selectNodeContents(el); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+  document.querySelectorAll('a[href="#atajos-todos"]').forEach(function(a){ a.addEventListener('click', function(){ $('atajos-todos').open = true; }); });
+
+  /* ---------- 1. Explorador ---------- */
+  var ZONES = {
+    tool:{name:'Herramientas', bg:'--z-tool-bg', fg:'--z-tool-fg', bd:'--z-tool-bd'},
+    tr:{name:'Transporte', bg:'--z-tr-bg', fg:'--z-tr-fg', bd:'--z-tr-bd'},
+    cmd:{name:'Edición (a–z)', bg:'--z-cmd-bg', fg:'--z-cmd-fg', bd:'--z-cmd-bd'},
+    mod:{name:'Modificadores', bg:'--z-mod-bg', fg:'--z-mod-fg', bd:'--z-mod-bd'},
+    sys:{name:'Teclado', bg:'--z-sys-bg', fg:'--z-sys-fg', bd:'--z-sys-bd'},
+    free:{name:'Libres para macros', bg:'--z-free-bg', fg:'--z-free-fg', bd:'--z-free-bd'}
+  };
+  var FREE = 'Sin función en Pro Tools: libre para un macro de VIA.';
+  function k(l, code, z, f, w, h){ return {l:l, code:code, z:z||'free', f:f||FREE, w:w||1, h:h||1}; }
+  var T='tool', R='tr', C='cmd', M='mod', S='sys';
+  var ROWS = [
+    [0, [k('Esc','Escape',T,'Recorre en ciclo las herramientas de edición.'),1,
+      k('F1','F1',T,'Modo Shuffle: los clips se pegan entre sí al mover o borrar.'),
+      k('F2','F2',T,'Modo Slip: movés clips libremente sin afectar a los demás.'),
+      k('F3','F3',T,'Modo Spot: ubicás el clip en un timecode exacto.'),
+      k('F4','F4',T,'Modo Grid: todo se ajusta a la grilla. Otra vez alterna absoluta/relativa.'),.5,
+      k('F5','F5',T,'Herramienta Zoomer.'),
+      k('F6','F6',T,'Herramienta Trim. F6 + F7 = Smart Tool.'),
+      k('F7','F7',T,'Herramienta Selector: seleccionás rangos de tiempo.'),
+      k('F8','F8',T,'Herramienta Grabber: movés clips.'),.5,
+      k('F9','F9',T,'Herramienta Scrubber: escuchás arrastrando.'),
+      k('F10','F10',T,'Herramienta Pencil: dibujás automatización o redibujás picos.'),
+      k('F11','F11'),
+      k('F12','F12',R,'Grabar. Igual que Ctrl + Espacio o el 3 del numpad.'),.25,
+      k('Impr','PrintScreen',S,'Libre en Pro Tools: ideal para el macro de Bounce (Ctrl + Alt + B).'),
+      k('Bloq','ScrollLock',S,'Libre en Pro Tools: ideal para un macro de guardar.'),
+      k('Pausa','Pause',S,'Libre en Pro Tools: ideal para activar Commands Focus por macro.'),3.25,
+      Object.assign(k('◎',null,S,'Ruedita: volumen de Windows; presionar = mute. Con VIA, Fn + girar puede ser zoom.'),{knob:true})]],
+    [1.25, [k('º','Backquote'),k('1','Digit1',C,'Zoom preset 1 (Commands Focus).'),k('2','Digit2',C,'Zoom preset 2 (Commands Focus).'),k('3','Digit3',C,'Zoom preset 3 (Commands Focus).'),k('4','Digit4',C,'Zoom preset 4 (Commands Focus).'),k('5','Digit5',C,'Zoom preset 5 (Commands Focus).'),
+      k('6','Digit6'),k('7','Digit7'),k('8','Digit8'),k('9','Digit9'),k('0','Digit0'),k("'",'Minus'),k('¡','Equal'),k('Retroceso','Backspace',C,'Borra la selección.',2),.25,
+      k('Ins','Insert'),k('Inicio','Home'),k('RePág','PageUp'),.25,
+      k('Bloq Num','NumLock',S,'Dejalo encendido: así el numpad funciona como transporte.'),k('/','NumpadDivide'),k('*','NumpadMultiply'),k('-','NumpadSubtract',R,'Nudge hacia atrás, según el valor de nudge elegido.')]],
+    [2.25, [k('Tab','Tab',C,'Salta al siguiente límite de clip, o al transiente con «Tab to Transient» activo.',1.5),
+      k('Q','KeyQ'),k('W','KeyW'),k('E','KeyE',C,'Zoom a la selección, y vuelta.'),k('R','KeyR',C,'Zoom out horizontal.'),k('T','KeyT',C,'Zoom in horizontal.'),
+      k('Y','KeyY'),k('U','KeyU'),k('I','KeyI'),k('O','KeyO'),k('P','KeyP',C,'Mueve la selección a la pista de arriba.'),k('`','BracketLeft'),k('+','BracketRight'),.25,
+      k('Enter','Enter',R,'Vuelve al inicio de la sesión.',1.25,2),.25,
+      k('Supr','Delete',C,'Borra la selección.'),k('Fin','End'),k('AvPág','PageDown'),.25,
+      k('7','Numpad7',R,'Metrónomo (clic) on/off.'),k('8','Numpad8',R,'Count-off on/off.'),k('9','Numpad9',R,'MIDI Merge on/off.'),k('+','NumpadAdd',R,'Nudge hacia adelante.',1,2)]],
+    [3.25, [k('Bloq Mayús','CapsLock','free',FREE,1.75),
+      k('A','KeyA',C,'Recorta el inicio del clip hasta el cursor.'),k('S','KeyS',C,'Recorta el final del clip desde el cursor.'),
+      k('D','KeyD',C,'Fade in desde el inicio del clip hasta el cursor.'),k('F','KeyF',C,'Crea un fade o crossfade sobre la selección.'),
+      k('G','KeyG',C,'Fade out desde el cursor hasta el final del clip.'),k('H','KeyH'),k('J','KeyJ'),k('K','KeyK'),k('L','KeyL'),
+      k('Ñ','Semicolon',C,'Mueve la selección a la pista de abajo (posición del «;» en teclados US).'),k('´','Quote'),k('Ç','Backslash'),4.75,
+      k('4','Numpad4',R,'Loop Playback on/off.'),k('5','Numpad5',R,'Loop Record on/off.'),k('6','Numpad6',R,'QuickPunch on/off.')]],
+    [4.25, [k('Shift','ShiftLeft',M,'Shift + S / M / R: solo, mute y armado de las pistas seleccionadas. Shift + Espacio: media velocidad.',1.25),
+      k('<','IntlBackslash'),k('Z','KeyZ',C,'Deshacer.'),k('X','KeyX',C,'Cortar.'),k('C','KeyC',C,'Copiar.'),k('V','KeyV',C,'Pegar.'),
+      k('B','KeyB',C,'Separa el clip en el cursor o en los bordes de la selección.'),k('N','KeyN'),k('M','KeyM'),k(',','Comma'),k('.','Period'),k('-','Slash'),
+      k('Shift','ShiftRight',M,'Shift + S / M / R: solo, mute y armado de las pistas seleccionadas.',2.75),1.25,
+      k('↑','ArrowUp',M,'Ctrl + ↑ / ↓: altura de las pistas seleccionadas.'),1.25,
+      k('1','Numpad1',R,'Rebobinar.'),k('2','Numpad2',R,'Avance rápido.'),k('3','Numpad3',R,'Grabar.'),k('Enter','NumpadEnter',R,'Crea un marcador en la posición actual.',1,2)]],
+    [5.25, [k('Ctrl','ControlLeft',M,'Ctrl + S guardar, Ctrl + Z deshacer, Ctrl + = ventana Edit/Mix.',1.25),
+      k('Win','MetaLeft',S,'Tecla de Windows.',1.25),
+      k('Alt','AltLeft',M,'Alt + clic en un control lo aplica a todas las pistas.',1.25),
+      k('Espacio','Space',R,'Play / Stop. Shift + Espacio reproduce a media velocidad.',6.25),
+      k('AltGr','AltRight',S,'Símbolos del layout español: @ # € [ ] { }',1.25),
+      k('Fn',null,S,'Capa de funciones: RGB, multimedia y tu capa Pro Tools en VIA.',1.25),
+      k('Menú','ContextMenu','free',FREE,1.25),k('Ctrl','ControlRight',M,'Modificador principal de Pro Tools.',1.25),.25,
+      k('←','ArrowLeft'),k('↓','ArrowDown',M,'Ctrl + ↑ / ↓: altura de las pistas seleccionadas.'),k('→','ArrowRight'),.25,
+      k('0','Numpad0',R,'Play / Stop desde el numpad.',2),k('.','NumpadDecimal',R,'Recupera un marcador: punto, número, punto.')]]
+  ];
+  var KEYS = [];
+  ROWS.forEach(function(row){
+    var x = 0, y = row[0];
+    row[1].forEach(function(it){
+      if (typeof it === 'number') { x += it; return; }
+      it.x = x; it.y = y; it.i = KEYS.length; KEYS.push(it); x += it.w;
+    });
+  });
+  var kb = $('kb'), btns = [], selIdx = KEYS.findIndex(function(q){ return q.code === 'Space'; }), zoneFilter = 'all';
+  KEYS.forEach(function(q){
+    var d = document.createElement('div');
+    d.className = 'k' + (q.knob ? ' knob' : '');
+    d.style.left = (q.x / 22.5 * 100) + '%';
+    d.style.top = (q.y / 6.25 * 100) + '%';
+    d.style.width = (q.w / 22.5 * 100) + '%';
+    d.style.height = (q.h / 6.25 * 100) + '%';
+    var b = document.createElement('button');
+    b.type = 'button';
+    var z = ZONES[q.z];
+    b.style.background = 'var(' + z.bg + ')'; b.style.color = 'var(' + z.fg + ')'; b.style.borderColor = 'var(' + z.bd + ')';
+    b.style.borderBottomColor = '#07080A';
+    b.textContent = q.l;
+    b.setAttribute('aria-label', (q.knob ? 'Ruedita' : q.l) + ': ' + q.f);
+    b.addEventListener('click', function(){ select(q.i, true); });
+    d.appendChild(b); kb.appendChild(d); btns.push(b);
+  });
+  function select(i, flash){
+    if (btns[selIdx]) btns[selIdx].classList.remove('sel');
+    selIdx = i; var q = KEYS[i], z = ZONES[q.z], b = btns[i];
+    b.classList.add('sel');
+    if (flash) { b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit'); }
+    var cap = $('iCap');
+    cap.textContent = q.knob ? 'Ruedita' : q.l;
+    cap.style.background = 'var(' + z.bg + ')'; cap.style.color = 'var(' + z.fg + ')'; cap.style.borderColor = 'var(' + z.bd + ')'; cap.style.borderBottomColor = '#07080A';
+    $('iZone').textContent = z.name; $('iZone').style.color = 'var(' + z.fg + ')';
+    $('iFn').textContent = q.f;
+  }
+  select(selIdx, false);
+  var zf = $('zoneFilters');
+  function renderZoneChips(){
+    var html = '<button class="chip" type="button" data-z="all" aria-pressed="' + (zoneFilter === 'all') + '">Todas</button>';
+    ['tool','tr','cmd','mod','free'].forEach(function(id){
+      var z = ZONES[id];
+      html += '<button class="chip" type="button" data-z="' + id + '" aria-pressed="' + (zoneFilter === id) + '"><span class="sw" style="background:var(' + z.bg + ');border-color:var(' + z.fg + ')"></span>' + z.name + '</button>';
+    });
+    zf.innerHTML = html;
+  }
+  renderZoneChips();
+  zf.addEventListener('click', function(e){
+    var c = e.target.closest('.chip'); if (!c) return;
+    zoneFilter = c.dataset.z; renderZoneChips();
+    KEYS.forEach(function(q, i){ btns[i].classList.toggle('dim', zoneFilter !== 'all' && q.z !== zoneFilter); });
+  });
+  function findKey(e){
+    var i = KEYS.findIndex(function(q){ return q.code === e.code; });
+    if (i < 0 && e.code === 'Enter' && e.location === 3) i = KEYS.findIndex(function(q){ return q.code === 'NumpadEnter'; });
+    return i;
+  }
+  handlers.explorer = {
+    key: function(e, idle){
+      var i = findKey(e);
+      if (i < 0) return;
+      btns[i].classList.add('down');
+      if (!e.repeat) select(i, !idle);
+    },
+    up: function(e){
+      var i = findKey(e);
+      if (i >= 0) btns[i].classList.remove('down');
+    },
+    blur: function(){ btns.forEach(function(b){ b.classList.remove('down'); }); }
+  };
+  window.addEventListener('blur', function(){ btns.forEach(function(b){ b.classList.remove('down'); }); });
+
+  /* ---------- 2. Herramientas ---------- */
+  var MODES = [['F1','Shuffle','Los clips se pegan entre sí.'],['F2','Slip','Movés clips libremente.'],['F3','Spot','Ubicás en un timecode exacto.'],['F4','Grid','Todo se ajusta a la grilla.']];
+  var TOOLS = [['F5','Zoomer','Clic acerca, Alt + clic aleja.'],['F6','Trim','Recortás los bordes del clip.'],['F7','Selector','Seleccionás rangos de tiempo.'],['F8','Grabber','Movés clips enteros.'],['F9','Scrubber','Escuchás arrastrando.'],['F10','Pencil','Dibujás automatización.']];
+  var mode = 1, tool = 2, smart = false, held = {}, gridRel = false;
+  function renderF(){
+    var g1 = MODES.map(function(m, i){ return '<button class="fkey' + (i === mode ? ' on' : '') + '" type="button" data-m="' + i + '">' + m[0] + '<small>' + m[1] + '</small></button>'; }).join('');
+    var g2 = TOOLS.map(function(t, i){
+      var on = smart ? (i === 1 || i === 2 || i === 3) : i === tool;
+      return '<button class="fkey' + (on ? ' on' : '') + '" type="button" data-t="' + i + '">' + t[0] + '<small>' + t[1] + '</small></button>';
+    }).join('');
+    $('frow').innerHTML = '<div class="grp"><span class="grp-l">MODOS</span><div class="grp-k">' + g1 + '</div></div><div class="grp"><span class="grp-l">HERRAMIENTAS</span><div class="grp-k">' + g2 + '</div></div>';
+    $('roMode').textContent = MODES[mode][1] + (mode === 3 ? (gridRel ? ' (relativa)' : ' (absoluta)') : '');
+    $('roModeD').textContent = MODES[mode][2];
+    $('roTool').textContent = smart ? 'Smart Tool' : TOOLS[tool][1];
+    $('roToolD').textContent = smart ? 'Selector + Grabber + Trim + fades según dónde apuntes.' : TOOLS[tool][2];
+  }
+  renderF();
+  function pressMode(i){ if (i === 3 && mode === 3) gridRel = !gridRel; mode = i; renderF(); }
+  function pressTool(i){ smart = false; tool = i; renderF(); }
+  $('frow').addEventListener('click', function(e){
+    var b = e.target.closest('.fkey'); if (!b) return;
+    if (b.dataset.m !== undefined) pressMode(+b.dataset.m); else pressTool(+b.dataset.t);
+    refocus('tools');
+  });
+  handlers.tools = {
+    key: function(e){
+      var m = /^F(\d+)$/.exec(e.code);
+      if (e.code === 'Escape') { smart = false; tool = (tool + 1) % TOOLS.length; renderF(); return; }
+      if (!m) return false;
+      var n = +m[1];
+      held[n] = true;
+      if (n >= 1 && n <= 4) pressMode(n - 1);
+      else if (n >= 5 && n <= 10) {
+        if ((n === 6 && held[7]) || (n === 7 && held[6])) { smart = true; renderF(); }
+        else pressTool(n - 5);
+      } else return false;
+    },
+    keyup: function(e){ var m = /^F(\d+)$/.exec(e.code); if (m) delete held[+m[1]]; },
+    blur: function(){ held = {}; }
+  };
+  var sm = $('smart'), tag = $('smartTag');
+  function smartAt(e){
+    var r = sm.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    var edge = x < 0.08 || x > 0.92, label;
+    if (edge && y < 0.25) label = x < .5 ? 'Fade in' : 'Fade out';
+    else if (edge) label = 'Trim';
+    else label = y < 0.5 ? 'Selector' : 'Grabber';
+    tag.hidden = false; tag.textContent = label;
+    var px = e.clientX - r.left, py = e.clientY - r.top;
+    if (px > r.width - 110) { tag.style.transform = 'translate(calc(-100% - 12px),-50%)'; } else { tag.style.transform = 'translate(12px,-50%)'; }
+    tag.style.left = px + 'px'; tag.style.top = py + 'px';
+  }
+  sm.addEventListener('pointermove', smartAt);
+  sm.addEventListener('pointerdown', smartAt);
+  sm.addEventListener('pointerleave', function(){ tag.hidden = true; });
+
+  /* ---------- 3. Editor de clip ---------- */
+  var WAVE = [];
+  for (var i = 0; i < 160; i++) { var v = Math.abs(Math.sin(i * .37) * .55 + Math.sin(i * 1.9) * .3 + Math.sin(i * .07) * .35); WAVE.push(Math.round(14 + Math.min(1, v) * 82)); }
+  var BARS = 8;
+  $('ruler1').innerHTML = $('ruler2').innerHTML = Array.from({length:BARS}, function(_, i){ return '<span>' + (i + 1) + '</span>'; }).join('');
+  var clips, cursor, hist;
+  function eReset(){ clips = [{s:6, e:94, fi:0, fo:0}]; cursor = 50; hist = []; renderE(); log('Cursor en ' + pos(cursor) + '. Probá con <b>B</b>.'); }
+  function pos(p){ var beats = p / 100 * BARS * 4; return 'compás ' + (Math.floor(beats / 4) + 1) + ', tiempo ' + (Math.floor(beats % 4) + 1); }
+  function log(h){ $('elog').innerHTML = h; }
+  function renderE(){
+    var html = clips.map(function(c, n){
+      var w = c.e - c.s, bars = '';
+      var i0 = Math.floor(c.s / 100 * WAVE.length), i1 = Math.ceil(c.e / 100 * WAVE.length);
+      for (var i = i0; i < i1; i++) bars += '<span style="height:' + WAVE[i] + '%"></span>';
+      return '<div class="clip" style="left:' + c.s + '%;width:' + w + '%"><span class="nm">Voz_0' + (n + 1) + '</span><div class="wv">' + bars + '</div>' +
+        (c.fi > 0 ? '<div class="fade in" style="width:' + (c.fi / w * 100) + '%"></div>' : '') +
+        (c.fo > 0 ? '<div class="fade out" style="width:' + (c.fo / w * 100) + '%"></div>' : '') + '</div>';
+    }).join('');
+    $('lane').innerHTML = html;
+    $('ecur').style.left = cursor + '%';
+  }
+  function clipAt(p){ for (var i = 0; i < clips.length; i++) if (p > clips[i].s + .3 && p < clips[i].e - .3) return i; return -1; }
+  function snap(){ hist.push(JSON.stringify(clips)); if (hist.length > 50) hist.shift(); }
+  function eCmd(key){
+    var i = clipAt(cursor), c = clips[i];
+    if (key === 'Z') { if (hist.length) { clips = JSON.parse(hist.pop()); renderE(); log('<b>Z</b> · Deshecho.'); } else log('No hay nada para deshacer.'); return; }
+    if (i < 0) { log('Poné el cursor dentro de un clip.'); return; }
+    snap();
+    if (key === 'B') { clips.splice(i, 1, {s:c.s, e:cursor, fi:Math.min(c.fi, cursor - c.s), fo:0}, {s:cursor, e:c.e, fi:0, fo:Math.min(c.fo, c.e - cursor)}); log('<b>B</b> · Clip separado en ' + pos(cursor) + '.'); }
+    else if (key === 'D') { c.fi = cursor - c.s; if (c.fi + c.fo > c.e - c.s) c.fo = c.e - c.s - c.fi; log('<b>D</b> · Fade in desde el inicio del clip hasta el cursor.'); }
+    else if (key === 'G') { c.fo = c.e - cursor; if (c.fi + c.fo > c.e - c.s) c.fi = c.e - c.s - c.fo; log('<b>G</b> · Fade out desde el cursor hasta el final.'); }
+    else if (key === 'A') { c.s = cursor; c.fi = 0; c.fo = Math.min(c.fo, c.e - c.s); log('<b>A</b> · Inicio recortado hasta el cursor.'); }
+    else if (key === 'S') { c.e = cursor; c.fo = 0; c.fi = Math.min(c.fi, c.e - c.s); log('<b>S</b> · Final recortado desde el cursor.'); }
+    renderE();
+  }
+  var EKEYS = [['B','Separar'],['A','Recortar inicio'],['S','Recortar final'],['D','Fade in'],['G','Fade out'],['Z','Deshacer']];
+  $('epad').innerHTML = EKEYS.map(function(q){ return '<button type="button" data-k="' + q[0] + '"><span class="kc">' + q[0] + '</span>' + q[1] + '</button>'; }).join('');
+  $('epad').addEventListener('click', function(e){ var b = e.target.closest('button'); if (b) { eCmd(b.dataset.k); refocus('editor'); } });
+  $('ereset').addEventListener('click', function(){ eReset(); refocus('editor'); });
+  var track = $('track');
+  function setCursor(e){ var r = track.getBoundingClientRect(); cursor = Math.max(0, Math.min(100, (e.clientX - r.left) / r.width * 100)); renderE(); log('Cursor en ' + pos(cursor) + '.'); }
+  track.addEventListener('pointerdown', setCursor);
+  handlers.editor = { key: function(e){
+    if (e.ctrlKey || e.altKey || e.metaKey) return false;
+    var map = {KeyB:'B', KeyA:'A', KeyS:'S', KeyD:'D', KeyG:'G', KeyZ:'Z'};
+    if (map[e.code]) { eCmd(map[e.code]); return; }
+    if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') { cursor = Math.max(0, Math.min(100, cursor + (e.code === 'ArrowLeft' ? -1 : 1) * (e.shiftKey ? 5 : 1))); renderE(); log('Cursor en ' + pos(cursor) + '.'); return; }
+    return false;
+  }};
+  eReset();
+
+  /* ---------- 4. Transporte ---------- */
+  var SPEED = 100 / 16; // 8 compases a 120 BPM = 16 s
+  var tp = {pos:5, playing:false, rec:false, loop:false, click:false, markers:{}, regions:[], cur:null, dot:null, last:0};
+  var NP = [
+    ['NumLock','Bloq<br>Num',''],['NumpadDivide','/',''],['NumpadMultiply','*',''],['NumpadSubtract','−','t','Nudge'],
+    ['Numpad7','7','t','Clic'],['Numpad8','8','t','Count'],['Numpad9','9','t','Merge'],['NumpadAdd','+','t','Nudge','grid-row:span 2'],
+    ['Numpad4','4','t','Loop'],['Numpad5','5','t','L.Rec'],['Numpad6','6','t','Punch'],
+    ['Numpad1','1','t','Rew'],['Numpad2','2','t','FF'],['Numpad3','3','t r','Rec'],['NumpadEnter','Enter','t','Marca','grid-row:span 2'],
+    ['Numpad0','0','t','Play / Stop','grid-column:span 2'],['NumpadDecimal','.','t','Marca']
+  ];
+  $('numpad').innerHTML = NP.map(function(q){
+    return '<button type="button" class="np ' + q[2] + '" data-c="' + q[0] + '" style="' + (q[4] || '') + (q[0] === 'NumLock' ? 'font-size:10px' : '') + '">' + q[1] + (q[3] ? '<small>' + q[3] + '</small>' : '') + '</button>';
+  }).join('');
+  function npFlash(code){ var b = $('numpad').querySelector('[data-c="' + code + '"]'); if (!b) return; b.classList.add('flash'); setTimeout(function(){ b.classList.remove('flash'); }, 160); }
+  function tlog(h){ $('tlog').innerHTML = h; }
+  function ctr(p){ var beats = p / 100 * BARS * 4; return (Math.floor(beats / 4) + 1) + ' | ' + (Math.floor(beats % 4) + 1); }
+  function renderT(){
+    $('ph').style.left = tp.pos + '%';
+    $('tctr').textContent = ctr(tp.pos);
+    var st = $('tst');
+    if (tp.rec) { st.textContent = '● Grabando'; st.style.color = 'var(--rec)'; }
+    else if (tp.playing) { st.textContent = '▶ Reproduciendo'; st.style.color = 'var(--cyan-ink)'; }
+    else { st.textContent = '■ Detenido'; st.style.color = 'var(--fg)'; }
+    $('regions').innerHTML = tp.regions.concat(tp.cur ? [tp.cur] : []).map(function(r){ return '<div class="rg" style="left:' + r.s + '%;width:' + Math.max(.3, r.e - r.s) + '%"></div>'; }).join('');
+    $('markers').innerHTML = Object.keys(tp.markers).map(function(n){ return '<div class="mk" style="left:' + tp.markers[n] + '%"><span>' + n + '</span></div>'; }).join('');
+    $('tl').classList.toggle('loop', tp.loop);
+    $('fLoop').classList.toggle('on', tp.loop);
+    $('fClick').classList.toggle('on', tp.click);
+    $('fRec').classList.toggle('on', tp.rec);
+    $('fDot').textContent = tp.dot === null ? 'Marcador: —' : 'Marcador: . ' + tp.dot + (tp.dot ? '' : '_');
+    $('fDot').classList.toggle('on', tp.dot !== null);
+    var n4 = $('numpad').querySelector('[data-c="Numpad4"]'); if (n4) n4.classList.toggle('on', tp.loop);
+    var n7 = $('numpad').querySelector('[data-c="Numpad7"]'); if (n7) n7.classList.toggle('on', tp.click);
+  }
+  function stopRec(){ if (tp.cur) { tp.regions.push(tp.cur); tp.cur = null; } tp.rec = false; }
+  function tick(t){
+    if (!tp.playing) return;
+    var dt = tp.last ? (t - tp.last) / 1000 : 0; tp.last = t;
+    tp.pos += dt * SPEED;
+    if (tp.pos >= 100) {
+      if (tp.loop && !tp.rec) tp.pos = 0;
+      else { tp.pos = 100; if (tp.cur) tp.cur.e = 100; stopRec(); tp.playing = false; tlog('Fin de la sesión.'); renderT(); return; }
+    }
+    if (tp.cur) tp.cur.e = tp.pos;
+    renderT();
+    requestAnimationFrame(tick);
+  }
+  function play(){ tp.playing = true; tp.last = 0; requestAnimationFrame(tick); }
+  function tCmd(code){
+    npFlash(code);
+    if (tp.dot !== null) {
+      var dm = /^Numpad([0-9])$/.exec(code);
+      if (dm) { tp.dot += dm[1]; renderT(); return; }
+      if (code === 'NumpadDecimal') {
+        var n = tp.dot; tp.dot = null;
+        if (n && tp.markers[n] !== undefined) { tp.pos = tp.markers[n]; tlog('<b>. ' + n + ' .</b> · Saltaste al marcador ' + n + '.'); }
+        else tlog(n ? 'No existe el marcador ' + n + '.' : 'Escribí un número entre los dos puntos.');
+        renderT(); return;
+      }
+      tp.dot = null;
+    }
+    switch (code) {
+      case 'Numpad0': case 'Space':
+        if (tp.playing) { stopRec(); tp.playing = false; tlog('<b>0</b> · Stop.'); } else { play(); tlog('<b>0</b> · Play.'); }
+        break;
+      case 'Numpad3':
+        if (tp.rec) { stopRec(); tp.playing = false; tlog('<b>3</b> · Grabación detenida.'); }
+        else { tp.rec = true; tp.cur = {s:tp.pos, e:tp.pos}; if (!tp.playing) play(); tlog('<b>3</b> · Grabando en «Voz». <b>0</b> para parar.'); }
+        break;
+      case 'Numpad1': tp.pos = Math.max(0, tp.pos - 100 / BARS); tlog('<b>1</b> · Rebobinar un compás.'); break;
+      case 'Numpad2': tp.pos = Math.min(100, tp.pos + 100 / BARS); tlog('<b>2</b> · Avanzar un compás.'); break;
+      case 'Numpad4': tp.loop = !tp.loop; tlog('<b>4</b> · Loop Playback ' + (tp.loop ? 'activado.' : 'desactivado.')); break;
+      case 'Numpad7': tp.click = !tp.click; tlog('<b>7</b> · Metrónomo ' + (tp.click ? 'encendido.' : 'apagado.')); break;
+      case 'Numpad5': tlog('<b>5</b> · Loop Record: graba tomas en loop sobre una selección.'); break;
+      case 'Numpad6': tlog('<b>6</b> · QuickPunch: entrás y salís de grabación sin cortar la reproducción.'); break;
+      case 'Numpad8': tlog('<b>8</b> · Count-off: compases de cuenta antes de grabar.'); break;
+      case 'Numpad9': tlog('<b>9</b> · MIDI Merge: graba MIDI encima sin borrar lo anterior.'); break;
+      case 'NumpadAdd': case 'NumpadSubtract': tlog('<b>+ / −</b> · Nudge: mueve el clip seleccionado en pasos fijos.'); break;
+      case 'NumpadEnter': {
+        var nn = Object.keys(tp.markers).length + 1; tp.markers[nn] = tp.pos; tlog('<b>Enter</b> · Marcador ' + nn + ' en ' + ctr(tp.pos) + '. Volvé con <b>. ' + nn + ' .</b>'); break;
+      }
+      case 'NumpadDecimal': tp.dot = ''; tlog('Marcador: escribí el número y cerrá con <b>.</b>'); break;
+      case 'Enter': tp.pos = 0; tlog('<b>Enter</b> · Inicio de la sesión.'); break;
+      default: return false;
+    }
+    renderT();
+  }
+  $('numpad').addEventListener('click', function(e){ var b = e.target.closest('.np'); if (b) { tCmd(b.dataset.c); refocus('transport'); } });
+  $('tl').addEventListener('pointerdown', function(e){ var r = $('tl').getBoundingClientRect(); tp.pos = Math.max(0, Math.min(100, (e.clientX - r.left) / r.width * 100)); if (tp.cur) { stopRec(); } renderT(); });
+  handlers.transport = { key: function(e){
+    if (e.ctrlKey || e.altKey || e.metaKey) return false;
+    var code = e.code;
+    if (code === 'Enter' && e.location === 3) code = 'NumpadEnter';
+    if (/^Numpad|^Space$|^Enter$/.test(code)) return tCmd(code);
+    return false;
+  }};
+  renderT();
+
+  /* ---------- 5. Buscador ---------- */
+  var SC = [
+    ['Transporte','Play / Stop','Espacio · 0 numpad'],['Transporte','Grabar','Ctrl + Espacio · F12 · 3 numpad'],['Transporte','Reproducir a media velocidad','Shift + Espacio'],
+    ['Transporte','Ir al inicio','Enter'],['Transporte','Crear marcador','Enter numpad'],['Transporte','Ir al marcador N','. N . (numpad)'],
+    ['Transporte','Loop Playback','4 numpad · Ctrl + Shift + L'],['Transporte','Loop Record','5 numpad'],['Transporte','QuickPunch','6 numpad'],
+    ['Transporte','Metrónomo on/off','7 numpad'],['Transporte','Count-off on/off','8 numpad'],['Transporte','Rebobinar / avanzar','1 / 2 numpad'],
+    ['Transporte','Ventana de marcadores','Ctrl + 5 numpad'],
+    ['Herramientas','Shuffle / Slip / Spot / Grid','F1 / F2 / F3 / F4'],['Herramientas','Zoomer / Trim / Selector / Grabber','F5 / F6 / F7 / F8'],
+    ['Herramientas','Scrubber / Pencil','F9 / F10'],['Herramientas','Smart Tool','F6 + F7'],['Herramientas','Recorrer herramientas','Esc'],
+    ['Edición','Separar clip','B · Ctrl + E'],['Edición','Recortar inicio hasta el cursor','A'],['Edición','Recortar final desde el cursor','S'],
+    ['Edición','Fade in hasta el cursor','D'],['Edición','Fade out desde el cursor','G'],['Edición','Fade / crossfade sobre la selección','F'],
+    ['Edición','Diálogo de fades','Ctrl + F'],['Edición','Unir separación (Heal)','Ctrl + H'],['Edición','Duplicar','Ctrl + D'],
+    ['Edición','Consolidar clip','Alt + Shift + 3'],['Edición','Deshacer / rehacer','Ctrl + Z / Ctrl + Shift + Z'],['Edición','Cortar / copiar / pegar (a–z)','X / C / V'],
+    ['Edición','Borrar selección','Supr · Retroceso'],['Edición','Siguiente límite de clip o transiente','Tab'],['Edición','Nudge','+ / − numpad'],
+    ['Vista','Zoom in / out (a–z)','T / R'],['Vista','Zoom horizontal','Ctrl + [ / ]'],['Vista','Zoom a la selección','E'],['Vista','Zoom presets','1 … 5'],
+    ['Vista','Ventana Edit ↔ Mix','Ctrl + ='],['Vista','Altura de pista','Ctrl + ↑ / ↓'],['Vista','Pista de arriba / abajo (a–z)','P / Ñ'],
+    ['Mezcla','Solo pistas seleccionadas','Shift + S'],['Mezcla','Mute pistas seleccionadas','Shift + M'],['Mezcla','Armar pistas seleccionadas','Shift + R'],
+    ['Mezcla','Aplicar a todas las pistas','Alt + clic'],['Mezcla','Bounce de la mezcla','Ctrl + Alt + B'],
+    ['Sesión','Guardar','Ctrl + S'],['Sesión','Nuevas pistas','Ctrl + Shift + N'],['Sesión','Activar Commands Focus','Ctrl + Alt + 1']
+  ];
+  var CATS = ['Todas','Transporte','Herramientas','Edición','Vista','Mezcla','Sesión'], cat = 'Todas';
+  function combo(s){
+    return s.split(' · ').map(function(alt){
+      return '<span class="combo">' + alt.split(' ').map(function(t){
+        if (t === '+' || t === '/' ) return '<i>' + t + '</i>';
+        if (t === '…' || t === 'numpad' || t === '(numpad)') return '<i>' + esc(t) + '</i>';
+        return '<span class="kc">' + esc(t) + '</span>';
+      }).join('') + '</span>';
+    }).join('<i style="font-style:normal;color:var(--dim);margin:0 6px">o</i>');
+  }
+  function renderCats(){ $('catFilters').innerHTML = CATS.map(function(c){ return '<button class="chip" type="button" data-c="' + c + '" aria-pressed="' + (c === cat) + '">' + c + '</button>'; }).join(''); }
+  function norm(s){ return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+  function renderList(){
+    var q = norm($('q').value.trim());
+    var rows = SC.filter(function(r){ return (cat === 'Todas' || r[0] === cat) && (!q || norm(r[1] + ' ' + r[2] + ' ' + r[0]).indexOf(q) >= 0); });
+    $('list').innerHTML = rows.length ? rows.map(function(r){ return '<div class="row"><span class="ds"><span class="ct">' + r[0] + '</span>' + esc(r[1]) + '</span>' + combo(r[2]) + '</div>'; }).join('') : '<p class="empty">No hay atajos con esa palabra. Probá con otra, como «fade» o «zoom».</p>';
+  }
+  renderCats(); renderList();
+  $('catFilters').addEventListener('click', function(e){ var c = e.target.closest('.chip'); if (!c) return; cat = c.dataset.c; renderCats(); renderList(); });
+  $('q').addEventListener('input', renderList);
+
+  /* ---------- 6. Desafío ---------- */
+  function plain(code){ return function(e){ return e.code === code && !e.ctrlKey && !e.altKey && !e.shiftKey; }; }
+  function shift(code){ return function(e){ return e.code === code && e.shiftKey && !e.ctrlKey; }; }
+  function ctrl(code){ return function(e){ return e.code === code && e.ctrlKey && !e.altKey && !e.shiftKey; }; }
+  var QS = [
+    ['Separá el clip', plain('KeyB'), 'B'],
+    ['Fade in hasta el cursor', plain('KeyD'), 'D'],
+    ['Fade out desde el cursor', plain('KeyG'), 'G'],
+    ['Recortá el inicio del clip', plain('KeyA'), 'A'],
+    ['Recortá el final del clip', plain('KeyS'), 'S'],
+    ['Zoom in', plain('KeyT'), 'T'],
+    ['Zoom out', plain('KeyR'), 'R'],
+    ['Herramienta Selector', plain('F7'), 'F7'],
+    ['Herramienta Grabber', plain('F8'), 'F8'],
+    ['Herramienta Trim', plain('F6'), 'F6'],
+    ['Modo Grid', plain('F4'), 'F4'],
+    ['Modo Slip', plain('F2'), 'F2'],
+    ['Grabá desde el numpad', plain('Numpad3'), '3 numpad'],
+    ['Play / Stop', function(e){ return (e.code === 'Space' || e.code === 'Numpad0') && !e.ctrlKey && !e.shiftKey; }, 'Espacio'],
+    ['Dejá un marcador', function(e){ return e.code === 'NumpadEnter' || (e.key === 'Enter' && e.location === 3); }, 'Enter numpad'],
+    ['Activá el loop desde el numpad', plain('Numpad4'), '4 numpad'],
+    ['Solo a las pistas seleccionadas', shift('KeyS'), 'Shift + S'],
+    ['Mute a las pistas seleccionadas', shift('KeyM'), 'Shift + M'],
+    ['Armá las pistas seleccionadas', shift('KeyR'), 'Shift + R'],
+    ['Guardá la sesión', ctrl('KeyS'), 'Ctrl + S'],
+    ['Duplicá la selección', ctrl('KeyD'), 'Ctrl + D'],
+    ['Abrí el diálogo de fades', ctrl('KeyF'), 'Ctrl + F'],
+    ['Deshacé (con Commands Focus)', plain('KeyZ'), 'Z']
+  ];
+  var qz = {list:[], i:0, res:[], wait:false};
+  function qNew(){
+    var a = QS.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    qz = {list:a.slice(0, 10), i:0, res:[], wait:false}; qRender(); $('qfb').className = 'fb'; $('qfb').textContent = 'Apretá el atajo en tu teclado.';
+  }
+  function qRender(){
+    $('qdots').innerHTML = Array.from({length:10}, function(_, i){ var c = qz.res[i]; return '<span class="' + (c === true ? 'g' : c === false ? 'b' : (i === qz.i && qz.i < 10 ? 'c' : '')) + '"></span>'; }).join('');
+    if (qz.i >= 10) {
+      var ok = qz.res.filter(Boolean).length;
+      $('qq').textContent = ok + ' de 10' + (ok === 10 ? '. Perfecto, Mauri.' : ok >= 7 ? '. Muy bien.' : '. A practicar un poco más.');
+      $('qfb').className = 'fb'; $('qfb').textContent = 'Tocá «Nueva ronda» para jugar otra vez.';
+      $('qskip').hidden = true; return;
+    }
+    $('qskip').hidden = false;
+    $('qq').textContent = qz.list[qz.i][0];
+  }
+  function qNext(){ qz.i++; qz.wait = false; qRender(); if (qz.i < 10) { $('qfb').className = 'fb'; $('qfb').textContent = ''; } }
+  function qAnswer(ok){
+    if (qz.wait || qz.i >= 10) return;
+    qz.wait = true; qz.res[qz.i] = ok;
+    var fb = $('qfb');
+    fb.className = 'fb ' + (ok ? 'good' : 'bad');
+    fb.innerHTML = (ok ? 'Correcto: ' : 'Era: ') + combo(qz.list[qz.i][2]);
+    qRender();
+    setTimeout(qNext, ok ? 900 : 1900);
+  }
+  handlers.quiz = {
+    focus: function(){ if (!qz.list.length) qNew(); },
+    key: function(e){
+      if (['Shift','Control','Alt','Meta','AltGraph'].indexOf(e.key) >= 0) return;
+      if (e.code === 'Tab') return false;
+      if (!qz.list.length || qz.i >= 10 || qz.wait) return;
+      qAnswer(!!qz.list[qz.i][1](e));
+    }
+  };
+  $('qskip').addEventListener('click', function(){ if (!qz.list.length) qNew(); qAnswer(false); refocus('quiz'); });
+  $('qnew').addEventListener('click', function(){ qNew(); $('qskip').hidden = false; refocus('quiz'); });
+})();
+</script>
+
+</body>
+</html>
