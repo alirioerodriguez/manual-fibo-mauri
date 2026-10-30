@@ -391,7 +391,7 @@ h3{font-family:var(--f-body);font-weight:600;letter-spacing:0}
 .face.front .hand{font-family:var(--f-display);font-weight:400;font-size:48px;text-transform:uppercase;color:#FF3D7F;text-shadow:3px 3px 0 #2BE6C3}
 .face.front .from{color:#C2AEB6}
 .face.front .hint{color:#F2C230}
-.face.back .msg{font-family:var(--f-display);font-weight:400;text-transform:uppercase;font-size:clamp(40px,10vw,58px);line-height:.95;color:#FF3D7F;text-shadow:3px 3px 0 #2BE6C3}
+.face.back .msg{font-family:var(--f-display);font-weight:400;text-transform:uppercase;font-size:clamp(36px,9vw,52px);line-height:.95;color:#FF3D7F;text-shadow:3px 3px 0 #2BE6C3}
 .face.back .sig{font-family:var(--f-body);font-size:15px;color:#C2AEB6}
 .mcover{border-color:#FF3D7F;box-shadow:0 18px 40px rgba(0,0,0,.6),0 0 30px rgba(255,61,127,.3)}
 .mcover .mt{font-weight:400;text-transform:uppercase;letter-spacing:0}
@@ -401,6 +401,26 @@ h3{font-family:var(--f-body);font-weight:600;letter-spacing:0}
 footer .sig{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
 .chip[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:#0B0709}
 .btn.pri{color:#0B0709}
+
+/* ===== Electro Andes: serie ===== */
+.hazard{position:relative;overflow:hidden;color:#0B0709;padding:6px 0;transform:rotate(1.5deg);
+  background:repeating-linear-gradient(-45deg,#FF3D7F 0 22px,#0B0709 22px 44px);border-block:3px solid #0B0709}
+.hazard .ea-track{animation-direction:reverse;animation-duration:34s;font-size:20px}
+.hazard .ea-track span{background:#0B0709;color:#FF3D7F;padding:2px 10px;margin-right:16px}
+.hazard .ea-track span b{color:#F2C230}
+.ov-hazard{position:absolute;left:-6%;right:-6%;bottom:3%;transform:rotate(2.5deg);z-index:1}
+.gift-ov{background:linear-gradient(180deg,#14060F 0%,#2A0B22 38%,#7A1A3A 64%,#D9542E 80%,#F2A03A 88%,#12070C 88.5%)}
+.ov-mtn{height:30vh}
+.ov-mtn path:first-child{fill:#3A0D20}
+.ov-sun{position:absolute;left:50%;bottom:24vh;width:34vh;height:34vh;margin-left:-17vh;border-radius:50%;background:radial-gradient(circle,#FFD27A 0%,#FF8C3A 45%,rgba(255,61,127,0) 70%);opacity:.55;pointer-events:none;z-index:0}
+.hero h1{text-shadow:-3px 0 rgba(200,16,46,.85),3px 0 rgba(43,230,195,.6)}
+.hero h1 span{text-shadow:-3px 0 rgba(200,16,46,.9),5px 4px 0 var(--cyan)}
+.gift{background:var(--amber);color:#0B0709;border:0;box-shadow:8px 8px 0 var(--blood)}
+.gift .eyebrow{color:#3A0F20}
+.gift .to{color:#0B0709;text-shadow:3px 3px 0 #fff}
+.gift p{color:#3A0F20 !important}
+.names span{border-color:#0B0709;color:#0B0709;font-weight:600}
+.gift .mauri .kc{background:#0B0709;color:#FF3D7F;border-color:#0B0709}
 
 @media (max-width: 900px){
   .kn{grid-template-columns:1fr}
@@ -425,14 +445,16 @@ footer .sig{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
 </style>
 
 <div class="gift-ov" id="giftOv" role="dialog" aria-modal="true" aria-label="Regalo para Mauri">
-  <div class="ov-banner"><div class="ea-track" aria-hidden="true"><span>Electro Andes</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Fibo F5 × Pro Tools</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Fibo F5 × Pro Tools</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Fibo F5 × Pro Tools</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Fibo F5 × Pro Tools</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span></div></div>
-  <svg class="ov-mtn" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true"><path d="M0 300 L0 190 L120 120 L210 170 L320 70 L430 160 L520 105 L640 190 L760 60 L880 150 L980 95 L1100 170 L1200 115 L1200 300Z" fill="#2A0C18" stroke="#C8102E" stroke-width="2" vector-effect="non-scaling-stroke"/><path d="M0 300 L0 240 L150 165 L260 220 L380 145 L500 232 L620 178 L740 240 L860 155 L1000 232 L1120 186 L1200 220 L1200 300Z" fill="#12070C" stroke="#FF3D7F" stroke-width="2.5" vector-effect="non-scaling-stroke"/><circle cx="210" cy="62" r="30" fill="none" stroke="#2BE6C3" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
-  <div class="gl" id="giftLead">Mauri, llegó un envío desde la montaña · primero, la tarjeta</div>
+  <div class="ov-sun" aria-hidden="true"></div>
+  <div class="hazard ov-hazard"><div class="ea-track" aria-hidden="true"><span>Black Mountain</span><span><b>■</b></span><span>Zona minera restringida</span><span><b>■</b></span><span>Solo personal autorizado</span><span><b>■</b></span><span>Black Mountain</span><span><b>■</b></span><span>Zona minera restringida</span><span><b>■</b></span><span>Solo personal autorizado</span><span><b>■</b></span><span>Black Mountain</span><span><b>■</b></span><span>Zona minera restringida</span><span><b>■</b></span><span>Solo personal autorizado</span><span><b>■</b></span><span>Black Mountain</span><span><b>■</b></span><span>Zona minera restringida</span><span><b>■</b></span><span>Solo personal autorizado</span><span><b>■</b></span></div></div>
+  <div class="ov-banner"><div class="ea-track" aria-hidden="true"><span>Electro Andes</span><span><b>▲</b></span><span>Arcadia Iruyana</span><span><b>▲</b></span><span>Fuera Black Mountain</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Arcadia Iruyana</span><span><b>▲</b></span><span>Fuera Black Mountain</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Arcadia Iruyana</span><span><b>▲</b></span><span>Fuera Black Mountain</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Arcadia Iruyana</span><span><b>▲</b></span><span>Fuera Black Mountain</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span></div></div>
+  <svg class="ov-mtn" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true"><path d="M0 300 L0 190 L120 120 L210 170 L320 70 L430 160 L520 105 L640 190 L760 60 L880 150 L980 95 L1100 170 L1200 115 L1200 300Z" fill="#2A0C18" stroke="#C8102E" stroke-width="2" vector-effect="non-scaling-stroke"/><path d="M0 300 L0 240 L150 165 L260 220 L380 145 L500 232 L620 178 L740 240 L860 155 L1000 232 L1120 186 L1200 220 L1200 300Z" fill="#12070C" stroke="#FF3D7F" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
+  <div class="gl" id="giftLead">Mauri, la resistencia de Arcadia Iruyana te mandó algo · primero, la tarjeta</div>
   <div class="scene">
     <button class="card3d" id="giftCard" type="button" aria-label="Abrir la tarjeta">
       <div class="inner">
-        <div class="face front"><span class="ea">Edición Electro Andes</span><span class="hand">Para Mauri</span><span class="from">De Salo, Jose, Kay, Anthony y Alirio</span><span class="hint">Tocá para abrir</span></div>
-        <div class="face back"><span class="ea">Transmisión desde la montaña</span><span class="msg">Marico el que lo lea</span><span class="sig">Con cariño,<br>Salo, Jose, Kay, Anthony y Alirio</span></div>
+        <div class="face front"><span class="ea">Célula de la resistencia · Arcadia Iruyana</span><span class="hand">Para Mauri</span><span class="from">De Salo, Jose, Kay, Anthony y Alirio</span><span class="hint">Tocá para abrir</span></div>
+        <div class="face back"><span class="ea">Mensaje interceptado</span><span class="msg">Marico el que lo lea</span><span class="sig">Con cariño, la célula:<br>Salo, Jose, Kay, Anthony y Alirio</span></div>
       </div>
     </button>
     <div class="boxwrap ready" id="giftBox" aria-hidden="true">
@@ -461,7 +483,7 @@ footer .sig{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
       </div></div>
     </div>
   </div>
-  <div class="mcover" id="mcover" hidden aria-hidden="true"><span class="me">Manual de instrucciones</span><span class="mt">Fibo F5<br><span>× Pro Tools</span></span><span class="mf">Para Mauri</span></div>
+  <div class="mcover" id="mcover" hidden aria-hidden="true"><span class="me">Archivo filtrado · Black Mountain</span><span class="mt">Fibo F5<br><span>× Pro Tools</span></span><span class="mf">Para Mauri</span></div>
   <button class="btn pri openbtn" id="giftOpen" type="button" style="font-size:17px;padding:14px 26px">Abrir el regalo</button>
 </div>
 <script>document.body.classList.add('gifting');</script>
@@ -480,13 +502,13 @@ footer .sig{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
 
 <main class="wrap">
 
-  <div class="ea-band"><div class="ea-track" aria-hidden="true"><span>Electro Andes</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Fibo F5 × Pro Tools</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Fibo F5 × Pro Tools</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Fibo F5 × Pro Tools</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Fibo F5 × Pro Tools</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span></div></div>
+  <div class="ea-band"><div class="ea-track" aria-hidden="true"><span>Electro Andes</span><span><b>▲</b></span><span>Arcadia Iruyana</span><span><b>▲</b></span><span>Fuera Black Mountain</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Arcadia Iruyana</span><span><b>▲</b></span><span>Fuera Black Mountain</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Arcadia Iruyana</span><span><b>▲</b></span><span>Fuera Black Mountain</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span><span>Electro Andes</span><span><b>▲</b></span><span>Arcadia Iruyana</span><span><b>▲</b></span><span>Fuera Black Mountain</span><span><b>▲</b></span><span>Edición Mau</span><span><b>▲</b></span><span>Feliz cumple</span><span><b>▲</b></span></div></div>
 
   <section class="hero" aria-label="Portada">
-    <svg class="hero-mtn" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true"><path d="M0 300 L0 190 L120 120 L210 170 L320 70 L430 160 L520 105 L640 190 L760 60 L880 150 L980 95 L1100 170 L1200 115 L1200 300Z" fill="#2A0C18" stroke="#C8102E" stroke-width="2" vector-effect="non-scaling-stroke"/><path d="M0 300 L0 240 L150 165 L260 220 L380 145 L500 232 L620 178 L740 240 L860 155 L1000 232 L1120 186 L1200 220 L1200 300Z" fill="#12070C" stroke="#FF3D7F" stroke-width="2.5" vector-effect="non-scaling-stroke"/><circle cx="210" cy="62" r="30" fill="none" stroke="#2BE6C3" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
+    <svg class="hero-mtn" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true"><path d="M0 300 L0 190 L120 120 L210 170 L320 70 L430 160 L520 105 L640 190 L760 60 L880 150 L980 95 L1100 170 L1200 115 L1200 300Z" fill="#2A0C18" stroke="#C8102E" stroke-width="2" vector-effect="non-scaling-stroke"/><path d="M0 300 L0 240 L150 165 L260 220 L380 145 L500 232 L620 178 L740 240 L860 155 L1000 232 L1120 186 L1200 220 L1200 300Z" fill="#12070C" stroke="#FF3D7F" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
     <div style="display:flex;flex-direction:column;gap:22px">
-      <span class="tag-ea">▲ Edición Electro Andes</span>
-      <div class="eyebrow">Manual de instrucciones · edición de audio</div>
+      <span class="tag-ea">▲ Archivo filtrado de Black Mountain</span>
+      <div class="eyebrow">Edición Electro Andes · manual de instrucciones</div>
       <h1>Fibo F5<br><span>× Pro Tools</span></h1>
       <p class="lead">Pro Tools ya lo sabés. Esto es lo que suma tu teclado nuevo: cómo configurar la perilla, qué hace cada tecla y, si querés repasar, todos los atajos con prácticas para probarlos.</p>
       <div class="specs">
@@ -503,9 +525,11 @@ footer .sig{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
     </div>
   </section>
 
+  <div class="hazard" aria-hidden="true"><div class="ea-track" aria-hidden="true"><span>Black Mountain</span><span><b>■</b></span><span>Zona minera restringida</span><span><b>■</b></span><span>Solo personal autorizado</span><span><b>■</b></span><span>Black Mountain</span><span><b>■</b></span><span>Zona minera restringida</span><span><b>■</b></span><span>Solo personal autorizado</span><span><b>■</b></span><span>Black Mountain</span><span><b>■</b></span><span>Zona minera restringida</span><span><b>■</b></span><span>Solo personal autorizado</span><span><b>■</b></span><span>Black Mountain</span><span><b>■</b></span><span>Zona minera restringida</span><span><b>■</b></span><span>Solo personal autorizado</span><span><b>■</b></span></div></div>
+
   <section id="perilla">
     <div class="sec-head">
-      <div class="eyebrow">Lo primero</div>
+      <div class="eyebrow">Hack de Kiwi · lo primero</div>
       <h2>Configurá la perilla</h2>
       <p class="lead">De fábrica sube y baja el volumen de Windows y presionada hace mute. Con VIA le asignás lo que quieras a cada gesto: girar a la derecha, girar a la izquierda y presionar.</p>
     </div>
@@ -549,7 +573,7 @@ footer .sig{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
 
   <section id="teclado">
     <div class="sec-head">
-      <div class="eyebrow">El mapa</div>
+      <div class="eyebrow">Mapa de la mina</div>
       <h2>Qué hace cada tecla en Pro Tools</h2>
       <p class="lead">Apretá cualquier tecla de tu Fibo y se hunde acá, con su función en Pro Tools. También podés tocarlas en el dibujo.</p>
     </div>
@@ -568,7 +592,7 @@ footer .sig{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
 
   <section id="via">
     <div class="sec-head">
-      <div class="eyebrow">Configuración</div>
+      <div class="eyebrow">Más hacks para la célula</div>
       <h2>Más cosas para configurar</h2>
       <p class="lead">Con el mismo VIA podés convertir las teclas que Pro Tools no usa en atajos de una sola tecla.</p>
     </div>
@@ -734,7 +758,7 @@ footer .sig{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
 
   <section class="bday" aria-label="Feliz cumpleaños">
     <button class="bday-btn" id="bdayBtn" type="button"><span class="bd1">Feliz cumple,</span><span class="bd2">Mau</span></button>
-    <span class="bday-hint">Tocalo ▲</span>
+    <span class="bday-hint">De parte de toda la célula ▲ tocalo</span>
   </section>
 
   <footer>
@@ -750,7 +774,7 @@ footer .sig{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
   function reset(){
     ov.hidden = false; ov.classList.remove('gone','opening','carded','expanding'); card.classList.remove('open');
     mc.hidden = true; mc.getAnimations && mc.getAnimations().forEach(function(a){ a.cancel(); });
-    card.setAttribute('aria-label','Abrir la tarjeta'); lead.textContent = 'Mauri, llegó un envío desde la montaña · primero, la tarjeta';
+    card.setAttribute('aria-label','Abrir la tarjeta'); lead.textContent = 'Mauri, la resistencia de Arcadia Iruyana te mandó algo · primero, la tarjeta';
     document.body.classList.add('gifting'); window.scrollTo(0, 0);
   }
   card.addEventListener('click', function(){
